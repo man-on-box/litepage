@@ -1,0 +1,43 @@
+:root {
+  background-color: #1b2239;
+  color: #f0f0f0;
+
+  font-family: "Roboto", sans-serif;
+  font-weight: 800;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-items: center;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 4em;
+  margin-top: 0;
+}
+
+a {
+  color: #79fff7;
+}
+
+main {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 2em;
+  text-align: center;
+}
+
+.logo {
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 0.5em #79fff7);
+}
