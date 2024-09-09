@@ -1,5 +1,10 @@
 :root {
-  background-color: #1b2239;
+  background-image: linear-gradient(
+    15deg,
+    hsl(256deg 46% 8%) 0%,
+    hsl(227deg 40% 22%) 72%,
+    hsl(214deg 58% 33%) 100%
+  );
   color: #f0f0f0;
 
   font-family: "Roboto", sans-serif;
@@ -39,5 +44,5 @@ main {
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 0.5em #79fff7);
+  filter: drop-shadow(0 0 1em #52b8b1);
 }

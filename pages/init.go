@@ -1,14 +1,13 @@
 package pages
 
 import (
+	"flag"
 	"html/template"
 	"io"
 	"log"
-	"os"
 	"time"
 
 	"github.com/man-on-box/litepage/data"
-	"github.com/man-on-box/litepage/util"
 )
 
 const distDir = "dist"
@@ -34,12 +33,20 @@ func New(config Config) *Pages {
 		config: config,
 		data:   data.New(config.Domain),
 	}
+
+	p.tmpl = parseTemplates()
+	p.pages = p.setupPages()
 	return &p
 }
-func (p *Pages) init() {
-	p.tmpl = parseTemplates()
-	scaffoldDistDir(distDir)
-	copyPublicDir(distDir)
+
+func (p *Pages) Create() {
+	dev := flag.Bool("dev", false, "Serve pages via dev server")
+	flag.Parse()
+	if *dev {
+		p.serve()
+	} else {
+		p.build()
+	}
 }
 
 func parseTemplates() *template.Template {
@@ -65,12 +72,9 @@ func parseTemplates() *template.Template {
 	return tmpl
 }
 
-func scaffoldDistDir(distDir string) {
-	os.MkdirAll(distDir+"/articles", os.ModePerm)
-}
-
-func copyPublicDir(distDir string) {
-	if err := util.CopyDir("public", distDir); err != nil {
-		log.Fatalf("Could not copy public directory: %v", err)
+func (p *Pages) executeTemplate(w io.Writer, name string, data any) {
+	err := p.tmpl.ExecuteTemplate(w, name, data)
+	if err != nil {
+		log.Fatal("Error executing template: ", err)
 	}
 }

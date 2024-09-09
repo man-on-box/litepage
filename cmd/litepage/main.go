@@ -8,5 +8,5 @@ func main() {
 	pages := pages.New(pages.Config{
 		Domain: "yourdomain.com",
 	})
-	pages.Build()
+	pages.Create()
 }
