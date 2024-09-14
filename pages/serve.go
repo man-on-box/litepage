@@ -15,6 +15,7 @@ func (p *Pages) serve() {
 		path := fileToUrlPath(page.filePath)
 		fmt.Println("Serving page: ", path)
 		http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+			fmt.Printf("%s: %s\n", r.Method, path)
 			if path == "/" {
 				if r.URL.Path == "/" {
 					page.render(w)
