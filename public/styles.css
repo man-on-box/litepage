@@ -39,6 +39,7 @@ main {
 }
 
 .logo {
+  margin: 3rem;
   will-change: filter;
   transition: filter 300ms;
 }
