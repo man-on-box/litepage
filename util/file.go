@@ -8,6 +8,11 @@ import (
 )
 
 func CreateFile(fileName string) *os.File {
+	dir := filepath.Dir(fileName)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		log.Fatalf("Could not create directory: %v", err)
+	}
+
 	f, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalf("Could not create file: %v", err)
@@ -36,17 +41,17 @@ func CopyFile(src string, dst string) error {
 	return nil
 }
 
-func CopyDir(src string, dst string) error {
+func CopyDir(src string, dst string) {
 	src = filepath.Clean(src)
 	dst = filepath.Clean(dst)
 
-	if err := os.MkdirAll(dst, os.ModePerm); err != nil {
-		return err
+	if err := os.MkdirAll(dst, 0755); err != nil {
+		log.Fatalf("Could not create directory: %v", err)
 	}
 
 	entries, err := os.ReadDir(src)
 	if err != nil {
-		return err
+		log.Fatalf("Could not read directory: %v", err)
 	}
 
 	for _, entry := range entries {
@@ -54,15 +59,19 @@ func CopyDir(src string, dst string) error {
 		dstPath := filepath.Join(dst, entry.Name())
 
 		if entry.IsDir() {
-			if err := CopyDir(srcPath, dstPath); err != nil {
-				return err
-			}
+			CopyDir(srcPath, dstPath)
 		} else {
-			if err := CopyFile(srcPath, dstPath); err != nil {
-				return err
-			}
+			CopyFile(srcPath, dstPath)
 		}
 	}
 
-	return nil
+}
+
+func RemoveDir(dir string) {
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		return
+	}
+	if err := os.RemoveAll(dir); err != nil {
+		log.Fatalf("Could not remove directory: %v", err)
+	}
 }

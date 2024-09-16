@@ -1,6 +1,5 @@
 dev:
-	air &
-	go run cmd/server/main.go || true
+	air
 
 build:
 	@echo "Building static site"

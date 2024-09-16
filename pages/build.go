@@ -2,17 +2,15 @@ package pages
 
 import (
 	"fmt"
-	"io"
-	"log"
 	"strings"
 
 	"github.com/man-on-box/litepage/util"
 )
 
-func (p *Pages) Build() {
+func (p *Pages) build() {
 	fmt.Println("Building static site: " + p.config.Domain)
-	p.init()
-	p.pages = p.setupPages()
+	util.RemoveDir(distDir)
+	util.CopyDir("public", distDir)
 	p.createPages()
 	p.postBuild()
 }
@@ -22,20 +20,12 @@ func (p *Pages) postBuild() {
 	p.generateSitemap()
 }
 
-func (p *Pages) executeTemplate(w io.Writer, name string, data any) {
-	err := p.tmpl.ExecuteTemplate(w, name, data)
-	if err != nil {
-		log.Fatal("Error executing template: ", err)
-	}
-}
-
 func (p *Pages) createPages() {
 	for _, page := range *p.pages {
 		fmt.Println("Creating page: ", page.filePath)
 		f := util.CreateFile(distDir + page.filePath)
 		page.render(f)
 	}
-
 }
 
 func (p *Pages) generateRobotsTxt() {
@@ -67,8 +57,7 @@ func (p *Pages) generateSitemap() {
 }
 
 func fileToUrlPath(path string) string {
-	if path == "/index.html" {
-		return "/"
-	}
-	return strings.TrimSuffix(path, ".html")
+	path = strings.TrimSuffix(path, ".html")
+	path = strings.TrimSuffix(path, "index")
+	return path
 }
