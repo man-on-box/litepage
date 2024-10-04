@@ -5,14 +5,14 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./tmp/main"
-  cmd = "go build -o ./tmp/main ./cmd/litepage/main.go"
+  cmd = "go build -o ./tmp/main ."
   delay = 500
   exclude_dir = ["assets", "tmp", "dist", "vendor", "testdata", "node_modules"]
   exclude_file = []
   exclude_regex = ["_test.go"]
   exclude_unchanged = false
   follow_symlink = false
-  full_bin = "./tmp/main -dev"
+  full_bin = "./tmp/main -lp-serve -lp-port 3001"
   include_dir = []
   include_ext = ["go", "tpl", "tmpl", "html", "css", "md", "json", "js"]
   include_file = []

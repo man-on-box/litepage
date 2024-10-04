@@ -2,22 +2,21 @@ package util
 
 import (
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 )
 
-func CreateFile(fileName string) *os.File {
+func CreateFile(fileName string) (*os.File, error) {
 	dir := filepath.Dir(fileName)
 	if err := os.MkdirAll(dir, 0755); err != nil {
-		log.Fatalf("Could not create directory: %v", err)
+		return nil, err
 	}
 
 	f, err := os.Create(fileName)
 	if err != nil {
-		log.Fatalf("Could not create file: %v", err)
+		return nil, err
 	}
-	return f
+	return f, nil
 }
 
 func CopyFile(src string, dst string) error {
@@ -41,17 +40,17 @@ func CopyFile(src string, dst string) error {
 	return nil
 }
 
-func CopyDir(src string, dst string) {
+func CopyDir(src string, dst string) error {
 	src = filepath.Clean(src)
 	dst = filepath.Clean(dst)
 
 	if err := os.MkdirAll(dst, 0755); err != nil {
-		log.Fatalf("Could not create directory: %v", err)
+		return err
 	}
 
 	entries, err := os.ReadDir(src)
 	if err != nil {
-		log.Fatalf("Could not read directory: %v", err)
+		return err
 	}
 
 	for _, entry := range entries {
@@ -64,14 +63,15 @@ func CopyDir(src string, dst string) {
 			CopyFile(srcPath, dstPath)
 		}
 	}
-
+	return nil
 }
 
-func RemoveDir(dir string) {
+func RemoveDir(dir string) error {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		return
+		return nil
 	}
 	if err := os.RemoveAll(dir); err != nil {
-		log.Fatalf("Could not remove directory: %v", err)
+		return err
 	}
+	return nil
 }
