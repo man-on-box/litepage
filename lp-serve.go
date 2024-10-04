@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func (lp *LitePage) Serve(port string) error {
+func (lp *Litepage) Serve(port string) error {
 	fmt.Printf("LITEPAGE starting dev server on port %s...\n", port)
 	var rootHandler http.HandlerFunc
 

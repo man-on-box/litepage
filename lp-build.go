@@ -8,7 +8,7 @@ import (
 	"github.com/man-on-box/litepage/internal/util"
 )
 
-func (lp *LitePage) Build() error {
+func (lp *Litepage) Build() error {
 	fmt.Printf("LITEPAGE building site '%s'...\n", lp.config.siteDomain)
 
 	err := util.RemoveDir(lp.config.distDir)
@@ -36,7 +36,7 @@ func (lp *LitePage) Build() error {
 	return nil
 }
 
-func (lp *LitePage) createPages() error {
+func (lp *Litepage) createPages() error {
 	for _, page := range *lp.pages {
 		fmt.Printf("- creating %s...\n", page.filePath)
 		f, err := util.CreateFile(lp.config.distDir + page.filePath)
@@ -48,7 +48,7 @@ func (lp *LitePage) createPages() error {
 	return nil
 }
 
-func (lp *LitePage) createSitemap() error {
+func (lp *Litepage) createSitemap() error {
 	f, err := util.CreateFile(lp.config.distDir + "/sitemap.xml")
 	if err != nil {
 		return err

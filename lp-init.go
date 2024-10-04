@@ -4,9 +4,9 @@ import (
 	"errors"
 )
 
-type Option func(*LitePage)
+type Option func(*Litepage)
 
-func New(domain string, options ...Option) (*LitePage, error) {
+func New(domain string, options ...Option) (*Litepage, error) {
 	config := &config{
 		siteDomain:  domain,
 		distDir:     "dist",
@@ -17,7 +17,7 @@ func New(domain string, options ...Option) (*LitePage, error) {
 		serve: "lp-serve",
 		port:  "lp-port",
 	}
-	lp := &LitePage{
+	lp := &Litepage{
 		config: config,
 		flags:  flags,
 		pages:  &[]Page{},
@@ -35,25 +35,25 @@ func New(domain string, options ...Option) (*LitePage, error) {
 }
 
 func WithDistDir(distDis string) Option {
-	return func(lp *LitePage) {
+	return func(lp *Litepage) {
 		lp.config.distDir = distDis
 	}
 }
 
 func WithPublicDir(publicDir string) Option {
-	return func(lp *LitePage) {
+	return func(lp *Litepage) {
 		lp.config.publicDir = publicDir
 	}
 }
 
 func WithoutSitemap() Option {
-	return func(lp *LitePage) {
+	return func(lp *Litepage) {
 		lp.config.withSitemap = false
 	}
 }
 
 func WithCustomFlags(serveFlag string, portFlag string) Option {
-	return func(lp *LitePage) {
+	return func(lp *Litepage) {
 		lp.flags = &flags{
 			serve: serveFlag,
 			port:  portFlag,
