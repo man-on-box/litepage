@@ -1,0 +1,16 @@
+{{ define "base" }}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/litepage.svg" />
+    <link href="/styles.css?v={{ version }}" rel="stylesheet" />
+    <title>{{ template "title" . }}</title>
+    {{ template "scripts" }}
+  </head>
+  <body>
+    <main>{{ template "body" .}}</main>
+  </body>
+</html>
+{{ end }}

@@ -1,5 +1,5 @@
 <div align="center">
-    <img alt="Litepage logo" height="200" width="200" src="./public/litepage.svg">
+    <img alt="Litepage logo" height="200" width="200" src="./example/public/litepage.svg">
 </div>
 <div align="center">
     <br />
@@ -8,53 +8,41 @@
 
 ## What is Litepage?
 
-Litepage serves as a template to quickly get up and running for your next static site. The philosophy is there is nothing to install, nothing to maintain, nothing to update. Purely some simple code written in Go to get you started.
+Litepage is a lightweight library to build your static sites, written in Go. You bring the content, and Litepage can get you up and running in seconds with a site ready to deploy with any deployment services that support hosting static websites, such as GitHub Pages and Cloudflare Pages.
 
-It is hyper focused on just delivering a static site with the assets and content you provide. What it lacks in features is made up in simplicity, which should pay off overtime.
+**As simple as it gets:**
+
+```go
+func main() {
+	lp, _ := litepage.New("hello-world.com")
+
+	lp.Page("/index.html", func(w io.Writer) {
+		t := template.Must(template.New("helloWorld").Parse("<h1>Hello, World!</h1>"))
+		t.Execute(w, nil)
+	})
+
+	lp.Run()
+}
+```
+
+Litepage is hyper focused on just delivering a static site with the assets and content you provide. With the barebones approach, you can add complexity and dependencies to suit your needs.
 
 Website coming to read more about this.
 
-## Install
+## Features
 
-Inline with the zero dependency philosophy, there is nothing to install. This repo serves as a template to start your own static site.
+- Automatically copy your assets from `./public` to your `./dist`
+- Build static site to your `./dist` folder
+- Create a basic 'out of the box' sitemap of your static site
+- Provide a dev server to be able to support hot reloading during development
+- Comes with 'recipes' on how to handle markdown files, hot reloading, creating pages pragmatically, tailwind and more
 
-Simply clone the repo and get started. Once cloned, `cd` into the repo and start serving the static site with:
+## Installation
 
-```bash
-make serve
-# go to https://localhost:3001
+```
+go get github.com/man-on-box/litepage
 ```
 
-And see the local page at https://localhost:3001
+## Usage
 
-## Local development
-
-With the above command, we start a dev server to host the static web pages. You can work with this and refresh everytime you make a change and re-build the app, however we can take advantage of a live-reloading tool called [Air](https://github.com/air-verse/air) to reload the app for us. The template already includes the config for you to get started.
-
-Air is a command line utility you install on your machine. While technically it is not a dependency of the project, I think the benifits of live-reloading justifies the use, as it is a big boost to the developer experience.
-
-If you don't already have it, you can install Air by running:
-
-```bash
-go install github.com/air-verse/air@latest
-```
-
-Now you can run the dev server in live-reload mode:
-
-```bash
-make dev
-```
-
-And go to https://localhost:3000
-
-Note the port 3000, as now we are connecting to the proxy server via Air to automatically refresh the site after saving changes.
-
-## Build the static site
-
-To build the static file assest, run:
-
-```bash
-make build
-```
-
-This builds and puts the static site in the `/dist` directory. From here it can be used by any tool to staticly host the site, be it Github Pages, Cloudflare, etc.
+WIP
