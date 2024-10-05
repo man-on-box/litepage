@@ -8,48 +8,40 @@
 
 ## What is Litepage?
 
-Litepage serves as a template to quickly get up and running for your next static site. The philosophy is there is nothing to install, nothing to maintain, nothing to update. Purely some code written in Go to get you started.
+Litepage is a lightweight library to build your static sites, written in Go. You bring the content, and Litepage can get you up and running in seconds with a site ready to deploy with any deployment services that support hosting static websites, such as GitHub Pages and Cloudflare Pages.
+
+**As simple as it gets:**
+
+```go
+func main() {
+	lp, _ := litepage.New("hello-world.com")
+
+	lp.Page("/index.html", func(w io.Writer) {
+		t := template.Must(template.New("helloWorld").Parse("<h1>Hello, World!</h1>"))
+		t.Execute(w, nil)
+	})
+
+	lp.Run()
+}
+```
 
 Litepage is hyper focused on just delivering a static site with the assets and content you provide. With the barebones approach, you can add complexity and dependencies to suit your needs.
 
 Website coming to read more about this.
 
-## Install
+## Features
 
-Inline with the zero dependency philosophy, there is nothing to install. This repo serves as a template to start your own static site.
+- Automatically copy your assets from `./public` to your `./dist`
+- Build static files to your `./dist` folder
+- Provide a dev server to be able to support hot reloading during development
+- Comes with 'recipes' on how to handle markdown files, hot reloading, creating pages pragmatically, tailwind and more
 
-## Start locally
+## Installation
 
-To build and serve the site, run:
-
-```bash
-make serve
+```
+go get github.com/man-on-box/litepage
 ```
 
-And see the local page at https://localhost:3000
+## Usage
 
-## Local development
-
-For improved DX, you can use a tool like [Air](https://github.com/air-verse/air) to recompile the app on save and refresh the page.
-
-If you don't already have it installed locally, you can install Air by running:
-
-```bash
-go install github.com/air-verse/air@latest
-```
-
-Now you can run the dev server in live-reload mode:
-
-```bash
-make dev
-```
-
-## Build the static site
-
-To build site ready to host somewhere, run:
-
-```bash
-make build
-```
-
-This builds and puts the static site in the `/dist` directory. From here it can be used by any tool to staticly host the site, be it Github Pages, Cloudflare, S3, anywhere that can host a website.
+WIP
