@@ -32,7 +32,8 @@ Website coming to read more about this.
 ## Features
 
 - Automatically copy your assets from `./public` to your `./dist`
-- Build static files to your `./dist` folder
+- Build static site to your `./dist` folder
+- Create a basic 'out of the box' sitemap of your static site
 - Provide a dev server to be able to support hot reloading during development
 - Comes with 'recipes' on how to handle markdown files, hot reloading, creating pages pragmatically, tailwind and more
 
