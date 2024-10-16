@@ -12,7 +12,6 @@ tmp_dir = "tmp"
   exclude_regex = ["_test.go"]
   exclude_unchanged = false
   follow_symlink = false
-  full_bin = "./tmp/main -lp-serve -lp-port 3001"
   include_dir = []
   include_ext = ["go", "tpl", "tmpl", "html", "css", "md", "json", "js"]
   include_file = []
