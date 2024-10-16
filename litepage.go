@@ -94,9 +94,12 @@ func (lp *litepage) Build() error {
 	return builder.Build()
 }
 
-// BuildOrServe by default it will build the static site in the dist directory.
+// BuildOrServe by default will build the static site in the dist directory.
 // If LP_MODE env variable is set to 'serve', it will instead serve the static site on port
 // 3000, or on port specified if LP_PORT env variable was set.
+//
+// This is useful for when you want to serve the site during development and build it for production
+// without requiring changes to the code.
 func (lp *litepage) BuildOrServe() error {
 	mode := os.Getenv("LP_MODE")
 	port := os.Getenv("LP_PORT")
