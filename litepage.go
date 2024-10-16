@@ -10,8 +10,9 @@ import (
 )
 
 type Litepage interface {
-	Run() error
+	Build() error
 	Serve(port string) error
+	BuildOrServe() error
 	Page(filePath string, handler types.PageHandler)
 }
 
@@ -25,6 +26,16 @@ type litepage struct {
 	pages       *[]types.Page
 }
 
+// New creates a new Litepage instance with the specified domain and optional configurations.
+// The domain parameter is required and must be a non-empty string representing the site's domain.
+// The options parameter allows for additional configurations to be applied to the Litepage instance.
+//
+// Example usage:
+//
+//	lp, err := New("example.com", WithDistDir("custom_dist"), WithPublicDir("custom_public"))
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
 func New(domain string, options ...Option) (Litepage, error) {
 	lp := &litepage{
 		siteDomain:  domain,
@@ -63,14 +74,30 @@ func WithoutSitemap() Option {
 	}
 }
 
+// Page registers a new page with the specified file path and handler.
 func (lp *litepage) Page(filePath string, handler types.PageHandler) {
 	*lp.pages = append(*lp.pages, types.Page{FilePath: filePath, Handler: handler})
 }
 
-// Run the litepage app. By default it will create the static site in the dist directory.
+// Serve starts the litepage server on the specified port.
+// It initializes a new server with the public directory and pages
+// from the litepage instance and begins serving requests.
+func (lp *litepage) Serve(port string) error {
+	server := serve.New(lp.publicDir, lp.pages)
+	return server.Serve(port)
+}
+
+// Build generates the static site in the dist directory using assets from the public directory and pages
+// from the litepage instance.
+func (lp *litepage) Build() error {
+	builder := build.New(lp.distDir, lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
+	return builder.Build()
+}
+
+// BuildOrServe by default it will build the static site in the dist directory.
 // If LP_MODE env variable is set to 'serve', it will instead serve the static site on port
 // 3000, or on port specified if LP_PORT env variable was set.
-func (lp *litepage) Run() error {
+func (lp *litepage) BuildOrServe() error {
 	mode := os.Getenv("LP_MODE")
 	port := os.Getenv("LP_PORT")
 
@@ -79,14 +106,4 @@ func (lp *litepage) Run() error {
 	} else {
 		return lp.Build()
 	}
-}
-
-func (lp *litepage) Build() error {
-	builder := build.New(lp.distDir, lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
-	return builder.Build()
-}
-
-func (lp *litepage) Serve(port string) error {
-	server := serve.New(lp.publicDir, lp.pages)
-	return server.Serve(port)
 }
