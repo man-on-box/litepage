@@ -9,6 +9,8 @@ import (
 	"github.com/man-on-box/litepage/pkg/types"
 )
 
+const defaultPort = "3000"
+
 type SiteServer interface {
 	Serve(port string) error
 }
@@ -17,8 +19,6 @@ type siteServer struct {
 	PublicDir string
 	Pages     *[]types.Page
 }
-
-const defaultPort = "3000"
 
 func New(publicDir string, pages *[]types.Page) SiteServer {
 	s := &siteServer{

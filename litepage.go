@@ -18,45 +18,27 @@ type Litepage interface {
 type Option func(*litepage)
 
 type litepage struct {
-	config *config
-	flags  *flags
-	pages  *[]types.Page
-}
-
-type config struct {
 	siteDomain  string
 	distDir     string
 	publicDir   string
 	withSitemap bool
-}
-
-type flags struct {
-	serve string
-	port  string
+	pages       *[]types.Page
 }
 
 func New(domain string, options ...Option) (Litepage, error) {
-	config := &config{
+	lp := &litepage{
 		siteDomain:  domain,
 		distDir:     "dist",
 		publicDir:   "public",
 		withSitemap: true,
-	}
-	flags := &flags{
-		serve: "lp-serve",
-		port:  "lp-port",
-	}
-	lp := &litepage{
-		config: config,
-		flags:  flags,
-		pages:  &[]types.Page{},
+		pages:       &[]types.Page{},
 	}
 
 	for _, opt := range options {
 		opt(lp)
 	}
 
-	if lp.config.siteDomain == "" {
+	if lp.siteDomain == "" {
 		return nil, errors.New("site domain is required, please provide a domain like 'catpics.com'")
 	}
 
@@ -65,28 +47,19 @@ func New(domain string, options ...Option) (Litepage, error) {
 
 func WithDistDir(distDis string) Option {
 	return func(lp *litepage) {
-		lp.config.distDir = distDis
+		lp.distDir = distDis
 	}
 }
 
 func WithPublicDir(publicDir string) Option {
 	return func(lp *litepage) {
-		lp.config.publicDir = publicDir
+		lp.publicDir = publicDir
 	}
 }
 
 func WithoutSitemap() Option {
 	return func(lp *litepage) {
-		lp.config.withSitemap = false
-	}
-}
-
-func WithCustomFlags(serveFlag string, portFlag string) Option {
-	return func(lp *litepage) {
-		lp.flags = &flags{
-			serve: serveFlag,
-			port:  portFlag,
-		}
+		lp.withSitemap = false
 	}
 }
 
@@ -109,11 +82,11 @@ func (lp *litepage) Run() error {
 }
 
 func (lp *litepage) Build() error {
-	builder := build.New(lp.config.distDir, lp.config.publicDir, lp.pages, lp.config.siteDomain, lp.config.withSitemap)
+	builder := build.New(lp.distDir, lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
 	return builder.Build()
 }
 
 func (lp *litepage) Serve(port string) error {
-	server := serve.New(lp.config.publicDir, lp.pages)
+	server := serve.New(lp.publicDir, lp.pages)
 	return server.Serve(port)
 }
