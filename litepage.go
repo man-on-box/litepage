@@ -83,7 +83,7 @@ func (lp *litepage) Page(filePath string, handler types.PageHandler) {
 // It initializes a new server with the public directory and pages
 // from the litepage instance and begins serving requests.
 func (lp *litepage) Serve(port string) error {
-	server := serve.New(lp.publicDir, lp.pages)
+	server := serve.New(lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
 	return server.Serve(port)
 }
 

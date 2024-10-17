@@ -2,9 +2,8 @@ package build
 
 import (
 	"fmt"
-	"path/filepath"
-	"strings"
 
+	"github.com/man-on-box/litepage/internal/common"
 	"github.com/man-on-box/litepage/internal/file"
 	"github.com/man-on-box/litepage/pkg/types"
 )
@@ -76,20 +75,7 @@ func (b *siteBuilder) createSitemap() error {
 	if err != nil {
 		return err
 	}
-	var builder strings.Builder
-	builder.WriteString(`<?xml version="1.0" encoding="UTF-8"?>`)
-	builder.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`)
-	for _, page := range *b.Pages {
-		urlPath := b.fileToUrlPath(page.FilePath)
-		builder.WriteString(fmt.Sprintf("<url><loc>https://%s%s</loc></url>", b.SiteDomain, urlPath))
-	}
-	builder.WriteString("</urlset>")
-	_, err = f.Write([]byte(builder.String()))
+	sitemap := common.BuildSitemap(b.SiteDomain, b.Pages)
+	_, err = f.Write([]byte(sitemap))
 	return err
-}
-
-func (b *siteBuilder) fileToUrlPath(path string) string {
-	path = strings.TrimSuffix(path, filepath.Ext(path))
-	path = strings.TrimSuffix(path, "index")
-	return path
 }
