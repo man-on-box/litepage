@@ -1,3 +1,17 @@
+// Package litepage is a minimalist, zero dependency static
+// site builder for Go, to help move towards a simpler web.
+//
+// Create your pages with the Page() method to build out your site.
+// Put your static assets like images, JS or CSS in the /public
+// directory.
+//
+// You can then use Build() to build the static site into your
+// dist directory, or Serve() to host the site locally, useful
+// for local development.
+//
+// For convenience, you can use BuildOrServe() method to either
+// build or serve, depending on environment variables. This allows
+// you to serve locally, while build for production.
 package litepage
 
 import (
@@ -10,9 +24,24 @@ import (
 )
 
 type Litepage interface {
+	// Build generates the static site in the dist directory using assets
+	// from the public directory and pages registered in litepage instance,
+	// ready to be hosted on your static site hosting service.
 	Build() error
+	// Serve hosts the static site on the specified port, instead of
+	// writing the site to the dist directory. Use this for local development.
 	Serve(port string) error
+	// BuildOrServe by default will build the static site in the dist directory.
+	// If LP_MODE env variable is set to 'serve', it will instead serve the static site on port
+	// 3000, or on port specified if LP_PORT env variable was set.
+	//
+	// This is useful for when you want to serve the site during development and
+	// build it for production without requiring changes to the code.
 	BuildOrServe() error
+	// Page registers a new page with the specified relative file path and handler.
+	// Create a page by specifying the relative path the page should be created,
+	// as well as the handler to render the page contents to the standard writer
+	// interface.
 	Page(filePath string, handler types.PageHandler)
 }
 
@@ -29,13 +58,6 @@ type litepage struct {
 // New creates a new Litepage instance with the specified domain and optional configurations.
 // The domain parameter is required and must be a non-empty string representing the site's domain.
 // The options parameter allows for additional configurations to be applied to the Litepage instance.
-//
-// Example usage:
-//
-//	lp, err := New("example.com", WithDistDir("custom_dist"), WithPublicDir("custom_public"))
-//	if err != nil {
-//	    log.Fatal(err)
-//	}
 func New(domain string, options ...Option) (Litepage, error) {
 	lp := &litepage{
 		siteDomain:  domain,
@@ -74,32 +96,20 @@ func WithoutSitemap() Option {
 	}
 }
 
-// Page registers a new page with the specified relative file path and handler.
 func (lp *litepage) Page(filePath string, handler types.PageHandler) {
 	*lp.pages = append(*lp.pages, types.Page{FilePath: filePath, Handler: handler})
 }
 
-// Serve starts the litepage server on the specified port.
-// It initializes a new server with the public directory and pages
-// from the litepage instance and begins serving requests.
 func (lp *litepage) Serve(port string) error {
 	server := serve.New(lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
 	return server.Serve(port)
 }
 
-// Build generates the static site in the dist directory using assets from the public directory and pages
-// from the litepage instance.
 func (lp *litepage) Build() error {
 	builder := build.New(lp.distDir, lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
 	return builder.Build()
 }
 
-// BuildOrServe by default will build the static site in the dist directory.
-// If LP_MODE env variable is set to 'serve', it will instead serve the static site on port
-// 3000, or on port specified if LP_PORT env variable was set.
-//
-// This is useful for when you want to serve the site during development and build it for production
-// without requiring changes to the code.
 func (lp *litepage) BuildOrServe() error {
 	mode := os.Getenv("LP_MODE")
 	port := os.Getenv("LP_PORT")
