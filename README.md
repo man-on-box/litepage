@@ -21,7 +21,7 @@ func main() {
 		t.Execute(w, nil)
 	})
 
-	lp.Run()
+	lp.BuildOrServe()
 }
 ```
 

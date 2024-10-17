@@ -19,7 +19,7 @@ func main() {
 
 	lp.Page("/index.html", handleHomepage())
 
-	err = lp.Run()
+	err = lp.BuildOrServe()
 	if err != nil {
 		log.Fatalf("Could not run app: %v", err)
 	}
