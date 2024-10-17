@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/man-on-box/litepage/internal/common"
 	"github.com/man-on-box/litepage/pkg/types"
 )
 
@@ -17,14 +18,18 @@ type SiteServer interface {
 }
 
 type siteServer struct {
-	PublicDir string
-	Pages     *[]types.Page
+	PublicDir   string
+	Pages       *[]types.Page
+	SiteDomain  string
+	WithSitemap bool
 }
 
-func New(publicDir string, pages *[]types.Page) SiteServer {
+func New(publicDir string, pages *[]types.Page, siteDomain string, withSitemap bool) SiteServer {
 	s := &siteServer{
-		PublicDir: publicDir,
-		Pages:     pages,
+		PublicDir:   publicDir,
+		Pages:       pages,
+		SiteDomain:  siteDomain,
+		WithSitemap: withSitemap,
 	}
 	return s
 }
@@ -37,7 +42,6 @@ func (s *siteServer) SetupRoutes() http.Handler {
 		fmt.Println("- serving page: ", page.FilePath)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
-			fmt.Printf("%s: %s\n", r.Method, r.URL)
 			page.Handler(w)
 		}
 
@@ -48,6 +52,13 @@ func (s *siteServer) SetupRoutes() http.Handler {
 		if pathWithoutExt == "/index" {
 			rootHandler = handler
 		}
+	}
+
+	if s.WithSitemap {
+		sitemap := common.BuildSitemap(s.SiteDomain, s.Pages)
+		mux.HandleFunc("/sitemap.xml", func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte(sitemap))
+		})
 	}
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

@@ -19,6 +19,7 @@ func TestSiteServer(t *testing.T) {
 		"index":    "<h1>Index Page</h1>",
 		"foo":      "<h1>Foo Page</h1>",
 		"testfile": "Hello from text file",
+		"sitemap":  `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/foo</loc></url></urlset>`,
 	}
 
 	testPages := &[]types.Page{
@@ -90,11 +91,17 @@ func TestSiteServer(t *testing.T) {
 			expectedStatus: http.StatusOK,
 			expectedBody:   body["testfile"],
 		},
+		{
+			name:           "Returns expected sitemap",
+			path:           "/sitemap.xml",
+			expectedStatus: http.StatusOK,
+			expectedBody:   body["sitemap"],
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := serve.New(tmpPublicDir, testPages)
+			s := serve.New(tmpPublicDir, testPages, "test.com", true)
 			routes := s.SetupRoutes()
 			server := httptest.NewServer(routes)
 			defer server.Close()
