@@ -74,7 +74,7 @@ func WithoutSitemap() Option {
 	}
 }
 
-// Page registers a new page with the specified file path and handler.
+// Page registers a new page with the specified relative file path and handler.
 func (lp *litepage) Page(filePath string, handler types.PageHandler) {
 	*lp.pages = append(*lp.pages, types.Page{FilePath: filePath, Handler: handler})
 }
