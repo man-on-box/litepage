@@ -21,6 +21,27 @@ func TestSiteServer(t *testing.T) {
 		"testfile": "Hello from text file",
 	}
 
+	testPages := &[]types.Page{
+		{FilePath: "/index.html", Handler: func(w io.Writer) {
+			t := template.Must(template.New("").Parse(body["index"]))
+			t.Execute(w, nil)
+		}},
+		{FilePath: "/foo.htm", Handler: func(w io.Writer) {
+			t := template.Must(template.New("").Parse(body["foo"]))
+			t.Execute(w, nil)
+		}},
+	}
+
+	tmpPublicDir, err := os.MkdirTemp("", "public")
+	assert.NoError(t, err)
+	defer os.RemoveAll(tmpPublicDir)
+
+	fmt.Printf("tmpPublicDir: %s\n", tmpPublicDir)
+
+	testFilePath := tmpPublicDir + "/testfile.txt"
+	err = os.WriteFile(testFilePath, []byte(body["testfile"]), 0644)
+	assert.NoError(t, err)
+
 	tests := []struct {
 		name           string
 		path           string
@@ -70,27 +91,6 @@ func TestSiteServer(t *testing.T) {
 			expectedBody:   body["testfile"],
 		},
 	}
-
-	testPages := &[]types.Page{
-		{FilePath: "/index.html", Handler: func(w io.Writer) {
-			t := template.Must(template.New("").Parse(body["index"]))
-			t.Execute(w, nil)
-		}},
-		{FilePath: "/foo.htm", Handler: func(w io.Writer) {
-			t := template.Must(template.New("").Parse(body["foo"]))
-			t.Execute(w, nil)
-		}},
-	}
-
-	tmpPublicDir, err := os.MkdirTemp("", "public")
-	assert.NoError(t, err)
-	defer os.RemoveAll(tmpPublicDir)
-
-	fmt.Printf("tmpPublicDir: %s\n", tmpPublicDir)
-
-	testFilePath := tmpPublicDir + "/testfile.txt"
-	err = os.WriteFile(testFilePath, []byte(body["testfile"]), 0644)
-	assert.NoError(t, err)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -81,12 +81,9 @@ func (b *siteBuilder) createSitemap() error {
 	builder.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`)
 	for _, page := range *b.Pages {
 		urlPath := b.fileToUrlPath(page.FilePath)
-		builder.WriteString(fmt.Sprintf(`
-        <url>
-		<loc>https://%s%s</loc>
-        </url>`, b.SiteDomain, urlPath))
+		builder.WriteString(fmt.Sprintf("<url><loc>https://%s%s</loc></url>", b.SiteDomain, urlPath))
 	}
-	builder.WriteString(`</urlset>`)
+	builder.WriteString("</urlset>")
 	_, err = f.Write([]byte(builder.String()))
 	return err
 }
