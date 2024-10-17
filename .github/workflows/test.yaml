@@ -1,8 +1,6 @@
 name: Test
 
-on:
-  # Allows to run this workflow manually from the Actions tab
-  workflow_dispatch:
+on: [push]
 
 jobs:
   test:
