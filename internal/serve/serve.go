@@ -13,6 +13,7 @@ const defaultPort = "3000"
 
 type SiteServer interface {
 	Serve(port string) error
+	SetupRoutes() http.Handler
 }
 
 type siteServer struct {
@@ -28,13 +29,8 @@ func New(publicDir string, pages *[]types.Page) SiteServer {
 	return s
 }
 
-func (s *siteServer) Serve(port string) error {
-	usePort := port
-	if usePort == "" {
-		usePort = defaultPort
-	}
-	fmt.Printf("LITEPAGE starting dev server on port %s...\n", usePort)
-
+func (s *siteServer) SetupRoutes() http.Handler {
+	mux := http.NewServeMux()
 	var rootHandler http.HandlerFunc
 
 	for _, page := range *s.Pages {
@@ -46,21 +42,31 @@ func (s *siteServer) Serve(port string) error {
 		}
 
 		pathWithoutExt := strings.TrimSuffix(page.FilePath, filepath.Ext(page.FilePath))
-		http.HandleFunc(page.FilePath, handler)
-		http.HandleFunc(pathWithoutExt, handler)
+		mux.HandleFunc(page.FilePath, handler)
+		mux.HandleFunc(pathWithoutExt, handler)
 
 		if pathWithoutExt == "/index" {
 			rootHandler = handler
 		}
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" && rootHandler != nil {
 			rootHandler(w, r)
 		} else {
-			http.ServeFile(w, r, "public"+r.URL.Path)
+			http.ServeFile(w, r, s.PublicDir+r.URL.Path)
 		}
 	})
+	return mux
+}
 
-	return http.ListenAndServe("localhost:"+usePort, nil)
+func (s *siteServer) Serve(port string) error {
+	usePort := port
+	if usePort == "" {
+		usePort = defaultPort
+	}
+	fmt.Printf("LITEPAGE starting dev server at http://localhost:%s...\n", usePort)
+
+	mux := s.SetupRoutes()
+	return http.ListenAndServe("localhost:"+usePort, mux)
 }
