@@ -42,13 +42,15 @@ func (b *siteBuilder) Build() error {
 		return fmt.Errorf("Could not copy public directory: %w", err)
 	}
 
-	err = b.createPages()
+	sortedPaths := common.SortPageMapByPath(b.PageMap)
+
+	err = b.createPages(sortedPaths)
 	if err != nil {
 		return fmt.Errorf("An error occurred while creating pages: %w", err)
 	}
 
 	if b.WithSitemap {
-		err = b.createSitemap()
+		err = b.createSitemap(sortedPaths)
 		if err != nil {
 			return fmt.Errorf("An error occurred while creating sitemap: %w", err)
 		}
@@ -57,9 +59,8 @@ func (b *siteBuilder) Build() error {
 	return nil
 }
 
-func (b *siteBuilder) createPages() error {
-	sortedPaths := common.SortPageMapByPath(b.PageMap)
-	for _, path := range sortedPaths {
+func (b *siteBuilder) createPages(paths []string) error {
+	for _, path := range paths {
 		fmt.Printf("- creating %s...\n", path)
 		f, err := file.CreateFile(b.DistDir + path)
 		if err != nil {
@@ -71,12 +72,12 @@ func (b *siteBuilder) createPages() error {
 	return nil
 }
 
-func (b *siteBuilder) createSitemap() error {
+func (b *siteBuilder) createSitemap(paths []string) error {
 	f, err := file.CreateFile(b.DistDir + "/sitemap.xml")
 	if err != nil {
 		return err
 	}
-	sitemap := common.BuildSitemap(b.SiteDomain, b.PageMap)
+	sitemap := common.BuildSitemap(b.SiteDomain, paths)
 	_, err = f.Write([]byte(sitemap))
 	return err
 }

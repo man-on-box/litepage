@@ -7,13 +7,12 @@ import (
 	"strings"
 )
 
-func BuildSitemap(domain string, pageMap *PageMap) string {
+func BuildSitemap(domain string, paths []string) string {
 	var builder strings.Builder
-	sortedPaths := SortPageMapByPath(pageMap)
 
 	builder.WriteString(`<?xml version="1.0" encoding="UTF-8"?>`)
 	builder.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`)
-	for _, path := range sortedPaths {
+	for _, path := range paths {
 		urlPath := fileToUrlPath(path)
 		builder.WriteString(fmt.Sprintf("<url><loc>https://%s%s</loc></url>", domain, urlPath))
 	}

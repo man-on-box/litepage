@@ -56,7 +56,7 @@ func (s *siteServer) SetupRoutes() http.Handler {
 	}
 
 	if s.WithSitemap {
-		sitemap := common.BuildSitemap(s.SiteDomain, s.PageMap)
+		sitemap := common.BuildSitemap(s.SiteDomain, sortedPaths)
 		mux.HandleFunc("/sitemap.xml", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(sitemap))
 		})
