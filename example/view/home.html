@@ -1,12 +1,22 @@
 {{ define "title" }}{{ .Title }}{{ end }} {{define "scripts"}}{{end}} {{ define
 "body" }}
-<img
-  height="70"
-  width="412"
-  class="logo"
-  src="/litepage-text.svg"
-  alt="{{ .Header }}"
-/>
-<p>{{ .Subheader }}</p>
-<a href="{{ .DocsUrl }}" target="_blank">Get started</a>
+<!-- <img -->
+<!--   height="70" -->
+<!--   width="412" -->
+<!--   class="logo" -->
+<!--   src="/litepage-text.svg" -->
+<!--   alt="{{ .Header }}" -->
+<!-- /> -->
+<div class="box">
+  <img
+    height="140"
+    width="140"
+    class="logo"
+    src="/litepage.svg"
+    alt="Litepage logo"
+  />
+  <h1>{{ .Header }}</h1>
+  <p>{{ .Subheader }}</p>
+  <a href="{{ .DocsUrl }}" target="_blank">Get started</a>
+</div>
 {{ end }}
