@@ -9,7 +9,7 @@ import (
 
 func BuildSitemap(domain string, pageMap *PageMap) string {
 	var builder strings.Builder
-	sortedPaths := sortByPath(pageMap)
+	sortedPaths := SortPageMapByPath(pageMap)
 
 	builder.WriteString(`<?xml version="1.0" encoding="UTF-8"?>`)
 	builder.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`)
@@ -22,7 +22,7 @@ func BuildSitemap(domain string, pageMap *PageMap) string {
 	return builder.String()
 }
 
-func sortByPath(pageMap *PageMap) []string {
+func SortPageMapByPath(pageMap *PageMap) []string {
 	keys := make([]string, len(*pageMap))
 	i := 0
 	for k := range *pageMap {

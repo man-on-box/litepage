@@ -58,12 +58,14 @@ func (b *siteBuilder) Build() error {
 }
 
 func (b *siteBuilder) createPages() error {
-	for path, handler := range *b.PageMap {
+	sortedPaths := common.SortPageMapByPath(b.PageMap)
+	for _, path := range sortedPaths {
 		fmt.Printf("- creating %s...\n", path)
 		f, err := file.CreateFile(b.DistDir + path)
 		if err != nil {
 			return err
 		}
+		handler := (*b.PageMap)[path]
 		handler(f)
 	}
 	return nil

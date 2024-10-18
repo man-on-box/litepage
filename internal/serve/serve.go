@@ -37,11 +37,13 @@ func (s *siteServer) SetupRoutes() http.Handler {
 	mux := http.NewServeMux()
 	var rootHandler http.HandlerFunc
 
-	for path, handler := range *s.PageMap {
+	sortedPaths := common.SortPageMapByPath(s.PageMap)
+	for _, path := range sortedPaths {
 		fmt.Println("- serving page: ", path)
 
+		pageHandler := (*s.PageMap)[path]
 		handler := func(w http.ResponseWriter, r *http.Request) {
-			handler(w)
+			pageHandler(w)
 		}
 
 		pathWithoutExt := strings.TrimSuffix(path, filepath.Ext(path))
