@@ -12,11 +12,11 @@ Litepage is a lightweight library to build your static sites, written in Go. Des
 
 **Features:**
 
-- Builds your static site ready to be hosted on GitHub Pages, Cloudflare Pages, etc.
-- Serves your static site locally during development
-- No plugins or extra packages to install
-- Common recipes to help with Markdown, Tailwind CSS, live reloading and more
-- Stable API with minimal changes over time
+- 🎁 Builds your static site ready to be hosted on GitHub Pages, Cloudflare Pages, etc.
+- ⚡ Serves your static site locally during development
+- 🧹 No plugins or extra packages to install
+- 📖 Common recipes to help with Markdown, Tailwind CSS, live reloading and more
+- 🐢 Stable API with minimal changes over time
 
 ## Installation
 
