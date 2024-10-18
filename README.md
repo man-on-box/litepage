@@ -46,11 +46,11 @@ func main() {
 		t.Execute(w, nil)
 	})
 
-	lp.BuildOrServe()
+	lp.Build()
 }
 ```
 
-When built, `index.html` will be created in your `dist` folder containing your parsed template, along with any static assets contained within your `public` folder.
+When built, `index.html` will be created in your `/dist` folder containing your parsed template, along with any static assets contained within your `/public` folder.
 
 ## Installation
 
@@ -86,7 +86,7 @@ lp, err = litepage.New("hello-world.com",
 
 ### Creating pages
 
-Create a new page by passing in the relative filename that will be used when building the site, such as `/index.html` or nested pages like '/articles/new-recipes.html'. **Note:** Paths must start with a `/`, include a file extension and be a valid filepath.
+Create a new page by passing in the relative filename that will be used when building the site, such as `/index.html` or nested pages like `/articles/new-recipes.html`. **Note:** Paths must start with a `/`, include a file extension and be a valid filepath.
 
 Here you also pass a second function that receives the standard `io.Writer` interface. All you need to do is write your templates to this interface to generate your pages with content. This means you can use any html templating library that supports this interface, such as the Go standard [html/template](https://pkg.go.dev/html/template) package or custom packages like [templ](https://templ.guide/).
 
@@ -113,11 +113,11 @@ lp, _ := litepage.New("hello-world.com")
 err := lp.Build()
 ```
 
-The result in `/dist` directory can then be used with your preferred static site hosting service like GitHub Pages or CloudFlare pages. It should be an easy process to automate your project and automatically host the outputted files during CI.
+The result in `/dist` directory can then be used with your preferred static site hosting service like GitHub Pages or CloudFlare pages. It should be an easy process to automate your build and host the outputted files during continuous integration.
 
-### Serving your site
+### Previewing your site
 
-Building your site is the main goal, but what about when developing? Ideally instead of writing files to `/dist`, you could see your site hosted locally. For this you can call `Serve` to serve your site on your local machine.
+So we know how to build, but what about when developing your site? Ideally instead of writing files to `/dist`, you could see your site hosted locally on your machine for a better developer experience. For this you can call `Serve` which serves your static site locally, instead of outputting it to your dist folder.
 
 ```go
 lp, _ := litepage.New("hello-world.com")
@@ -127,7 +127,7 @@ lp, _ := litepage.New("hello-world.com")
 err := lp.Serve("3000")
 ```
 
-This will start a dev server at http://localhost:3000 to preview your site.
+This will start a web server at http://localhost:3000 to preview your site.
 
 ### Build or Serve
 
@@ -154,4 +154,4 @@ See the [example Makefile](./example/Makefile) on how you could build or serve b
 
 If you like this project, consider giving it a star ⭐.
 
-If you have any feedback please raise it as an issue 🎁
+If you have any feedback please raise it as an issue 🎁.
