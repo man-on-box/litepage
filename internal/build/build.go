@@ -5,7 +5,6 @@ import (
 
 	"github.com/man-on-box/litepage/internal/common"
 	"github.com/man-on-box/litepage/internal/file"
-	"github.com/man-on-box/litepage/pkg/types"
 )
 
 type SiteBuilder interface {
@@ -15,16 +14,16 @@ type SiteBuilder interface {
 type siteBuilder struct {
 	DistDir     string
 	PublicDir   string
-	Pages       *[]types.Page
+	PageMap     *common.PageMap
 	SiteDomain  string
 	WithSitemap bool
 }
 
-func New(distDir string, publicDir string, pages *[]types.Page, siteDomain string, withSitemap bool) SiteBuilder {
+func New(distDir string, publicDir string, pageMap *common.PageMap, siteDomain string, withSitemap bool) SiteBuilder {
 	b := &siteBuilder{
 		DistDir:     distDir,
 		PublicDir:   publicDir,
-		Pages:       pages,
+		PageMap:     pageMap,
 		SiteDomain:  siteDomain,
 		WithSitemap: withSitemap,
 	}
@@ -59,13 +58,13 @@ func (b *siteBuilder) Build() error {
 }
 
 func (b *siteBuilder) createPages() error {
-	for _, page := range *b.Pages {
-		fmt.Printf("- creating %s...\n", page.FilePath)
-		f, err := file.CreateFile(b.DistDir + page.FilePath)
+	for path, handler := range *b.PageMap {
+		fmt.Printf("- creating %s...\n", path)
+		f, err := file.CreateFile(b.DistDir + path)
 		if err != nil {
 			return err
 		}
-		page.Handler(f)
+		handler(f)
 	}
 	return nil
 }
@@ -75,7 +74,7 @@ func (b *siteBuilder) createSitemap() error {
 	if err != nil {
 		return err
 	}
-	sitemap := common.BuildSitemap(b.SiteDomain, b.Pages)
+	sitemap := common.BuildSitemap(b.SiteDomain, b.PageMap)
 	_, err = f.Write([]byte(sitemap))
 	return err
 }

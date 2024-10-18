@@ -9,8 +9,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/man-on-box/litepage/internal/common"
 	"github.com/man-on-box/litepage/internal/serve"
-	"github.com/man-on-box/litepage/pkg/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,18 +19,18 @@ func TestSiteServer(t *testing.T) {
 		"index":    "<h1>Index Page</h1>",
 		"foo":      "<h1>Foo Page</h1>",
 		"testfile": "Hello from text file",
-		"sitemap":  `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/foo</loc></url></urlset>`,
+		"sitemap":  `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/nested/foo</loc></url></urlset>`,
 	}
 
-	testPages := &[]types.Page{
-		{FilePath: "/index.html", Handler: func(w io.Writer) {
+	testPages := &common.PageMap{
+		"/index.html": func(w io.Writer) {
 			t := template.Must(template.New("").Parse(body["index"]))
 			t.Execute(w, nil)
-		}},
-		{FilePath: "/foo.htm", Handler: func(w io.Writer) {
+		},
+		"/nested/foo.htm": func(w io.Writer) {
 			t := template.Must(template.New("").Parse(body["foo"]))
 			t.Execute(w, nil)
-		}},
+		},
 	}
 
 	tmpPublicDir, err := os.MkdirTemp("", "public")
@@ -68,14 +68,14 @@ func TestSiteServer(t *testing.T) {
 			expectedBody:   body["index"],
 		},
 		{
-			name:           "Can serve foo page at '/foo.htm",
-			path:           "/foo.htm",
+			name:           "Can serve nested foo page at '/nested/foo.htm",
+			path:           "/nested/foo.htm",
 			expectedStatus: http.StatusOK,
 			expectedBody:   body["foo"],
 		},
 		{
-			name:           "Can serve foo page at '/foo",
-			path:           "/foo",
+			name:           "Can serve nested foo page at '/nested/foo",
+			path:           "/nested/foo",
 			expectedStatus: http.StatusOK,
 			expectedBody:   body["foo"],
 		},

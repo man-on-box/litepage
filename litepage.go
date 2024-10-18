@@ -15,12 +15,16 @@
 package litepage
 
 import (
-	"errors"
+	"fmt"
+	"io"
+	"net/url"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/man-on-box/litepage/internal/build"
+	"github.com/man-on-box/litepage/internal/common"
 	"github.com/man-on-box/litepage/internal/serve"
-	"github.com/man-on-box/litepage/pkg/types"
 )
 
 type Litepage interface {
@@ -42,7 +46,7 @@ type Litepage interface {
 	// Create a page by specifying the relative path the page should be created,
 	// as well as the handler to render the page contents to the standard writer
 	// interface.
-	Page(filePath string, handler types.PageHandler)
+	Page(filePath string, handler func(w io.Writer)) error
 }
 
 type Option func(*litepage)
@@ -52,27 +56,28 @@ type litepage struct {
 	distDir     string
 	publicDir   string
 	withSitemap bool
-	pages       *[]types.Page
+	pageMap     *common.PageMap
 }
 
 // New creates a new Litepage instance with the specified domain and optional configurations.
 // The domain parameter is required and must be a non-empty string representing the site's domain.
 // The options parameter allows for additional configurations to be applied to the Litepage instance.
 func New(domain string, options ...Option) (Litepage, error) {
+	err := isValidDomain(domain)
+	if err != nil {
+		return nil, err
+	}
+
 	lp := &litepage{
 		siteDomain:  domain,
 		distDir:     "dist",
 		publicDir:   "public",
 		withSitemap: true,
-		pages:       &[]types.Page{},
+		pageMap:     &common.PageMap{},
 	}
 
 	for _, opt := range options {
 		opt(lp)
-	}
-
-	if lp.siteDomain == "" {
-		return nil, errors.New("site domain is required, please provide a domain like 'catpics.com'")
 	}
 
 	return lp, nil
@@ -96,17 +101,29 @@ func WithoutSitemap() Option {
 	}
 }
 
-func (lp *litepage) Page(filePath string, handler types.PageHandler) {
-	*lp.pages = append(*lp.pages, types.Page{FilePath: filePath, Handler: handler})
+func (lp *litepage) Page(filePath string, handler func(w io.Writer)) error {
+	err := lp.isValidFilePath(filePath)
+	if err != nil {
+		return fmt.Errorf("error when validating file path '%s': %w", filePath, err)
+	}
+	pageMap := *lp.pageMap
+	_, exists := pageMap[filePath]
+	if exists {
+		return fmt.Errorf("cannot add page '%s', it already exists", filePath)
+	}
+
+	pageMap[filePath] = handler
+
+	return nil
 }
 
 func (lp *litepage) Serve(port string) error {
-	server := serve.New(lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
+	server := serve.New(lp.publicDir, lp.pageMap, lp.siteDomain, lp.withSitemap)
 	return server.Serve(port)
 }
 
 func (lp *litepage) Build() error {
-	builder := build.New(lp.distDir, lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
+	builder := build.New(lp.distDir, lp.publicDir, lp.pageMap, lp.siteDomain, lp.withSitemap)
 	return builder.Build()
 }
 
@@ -119,4 +136,42 @@ func (lp *litepage) BuildOrServe() error {
 	} else {
 		return lp.Build()
 	}
+}
+
+func isValidDomain(domain string) error {
+	if domain == "" {
+		return fmt.Errorf("site domain is required, please provide a domain like 'catpics.com'")
+	}
+
+	parsedUrl, err := url.Parse(domain)
+	if err != nil || parsedUrl.String() != domain {
+		return fmt.Errorf("site domain '%s' is not valid, check it does not include spaces or any illegal characters", domain)
+	}
+
+	return nil
+}
+
+func (lp *litepage) isValidFilePath(filePath string) error {
+	if !strings.HasPrefix(filePath, "/") {
+		return fmt.Errorf("path must start with '/'")
+	}
+
+	parsedURL, err := url.Parse(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to parse path: %v", err)
+	}
+
+	if parsedURL.String() != filePath {
+		return fmt.Errorf("path contains invalid characters")
+	}
+
+	if strings.Contains(parsedURL.Path, "..") {
+		return fmt.Errorf("path contains illegal '..' for directory traversal")
+	}
+
+	ext := filepath.Ext(parsedURL.Path)
+	if ext == "" {
+		return fmt.Errorf("path must end with a file extension e.g. '.html'")
+	}
+	return nil
 }

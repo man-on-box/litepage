@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/man-on-box/litepage/internal/common"
-	"github.com/man-on-box/litepage/pkg/types"
 )
 
 const defaultPort = "3000"
@@ -19,15 +18,15 @@ type SiteServer interface {
 
 type siteServer struct {
 	PublicDir   string
-	Pages       *[]types.Page
+	PageMap     *common.PageMap
 	SiteDomain  string
 	WithSitemap bool
 }
 
-func New(publicDir string, pages *[]types.Page, siteDomain string, withSitemap bool) SiteServer {
+func New(publicDir string, pageMap *common.PageMap, siteDomain string, withSitemap bool) SiteServer {
 	s := &siteServer{
 		PublicDir:   publicDir,
-		Pages:       pages,
+		PageMap:     pageMap,
 		SiteDomain:  siteDomain,
 		WithSitemap: withSitemap,
 	}
@@ -38,15 +37,15 @@ func (s *siteServer) SetupRoutes() http.Handler {
 	mux := http.NewServeMux()
 	var rootHandler http.HandlerFunc
 
-	for _, page := range *s.Pages {
-		fmt.Println("- serving page: ", page.FilePath)
+	for path, handler := range *s.PageMap {
+		fmt.Println("- serving page: ", path)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
-			page.Handler(w)
+			handler(w)
 		}
 
-		pathWithoutExt := strings.TrimSuffix(page.FilePath, filepath.Ext(page.FilePath))
-		mux.HandleFunc(page.FilePath, handler)
+		pathWithoutExt := strings.TrimSuffix(path, filepath.Ext(path))
+		mux.HandleFunc(path, handler)
 		mux.HandleFunc(pathWithoutExt, handler)
 
 		if pathWithoutExt == "/index" {
@@ -55,7 +54,7 @@ func (s *siteServer) SetupRoutes() http.Handler {
 	}
 
 	if s.WithSitemap {
-		sitemap := common.BuildSitemap(s.SiteDomain, s.Pages)
+		sitemap := common.BuildSitemap(s.SiteDomain, s.PageMap)
 		mux.HandleFunc("/sitemap.xml", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(sitemap))
 		})
