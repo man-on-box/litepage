@@ -56,7 +56,8 @@ type litepage struct {
 	distDir     string
 	publicDir   string
 	withSitemap bool
-	pageMap     *common.PageMap
+	pages       *[]common.Page
+	pathMap     map[string]interface{}
 }
 
 // New creates a new Litepage instance with the specified domain and optional configurations.
@@ -73,7 +74,8 @@ func New(domain string, options ...Option) (Litepage, error) {
 		distDir:     "dist",
 		publicDir:   "public",
 		withSitemap: true,
-		pageMap:     &common.PageMap{},
+		pathMap:     map[string]interface{}{},
+		pages:       &[]common.Page{},
 	}
 
 	for _, opt := range options {
@@ -106,24 +108,26 @@ func (lp *litepage) Page(filePath string, handler func(w io.Writer)) error {
 	if err != nil {
 		return fmt.Errorf("error when validating file path '%s': %w", filePath, err)
 	}
-	pageMap := *lp.pageMap
-	_, exists := pageMap[filePath]
+	_, exists := lp.pathMap[filePath]
 	if exists {
 		return fmt.Errorf("cannot add page '%s', it already exists", filePath)
 	}
 
-	pageMap[filePath] = handler
+	// Because there is no native ordered map in Go, I opted to use a slice to preserve
+	// page insertion order, and copy the file path into a map for o(1) lookup time.
+	lp.pathMap[filePath] = struct{}{}
+	*lp.pages = append(*lp.pages, common.Page{Path: filePath, Handler: handler})
 
 	return nil
 }
 
 func (lp *litepage) Serve(port string) error {
-	server := serve.New(lp.publicDir, lp.pageMap, lp.siteDomain, lp.withSitemap)
+	server := serve.New(lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
 	return server.Serve(port)
 }
 
 func (lp *litepage) Build() error {
-	builder := build.New(lp.distDir, lp.publicDir, lp.pageMap, lp.siteDomain, lp.withSitemap)
+	builder := build.New(lp.distDir, lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
 	return builder.Build()
 }
 

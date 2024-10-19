@@ -18,15 +18,15 @@ type SiteServer interface {
 
 type siteServer struct {
 	PublicDir   string
-	PageMap     *common.PageMap
+	Pages       *[]common.Page
 	SiteDomain  string
 	WithSitemap bool
 }
 
-func New(publicDir string, pageMap *common.PageMap, siteDomain string, withSitemap bool) SiteServer {
+func New(publicDir string, pages *[]common.Page, siteDomain string, withSitemap bool) SiteServer {
 	s := &siteServer{
 		PublicDir:   publicDir,
-		PageMap:     pageMap,
+		Pages:       pages,
 		SiteDomain:  siteDomain,
 		WithSitemap: withSitemap,
 	}
@@ -37,17 +37,15 @@ func (s *siteServer) SetupRoutes() http.Handler {
 	mux := http.NewServeMux()
 	var rootHandler http.HandlerFunc
 
-	sortedPaths := common.SortPageMapByPath(s.PageMap)
-	for _, path := range sortedPaths {
-		fmt.Println("- serving page: ", path)
+	for _, p := range *s.Pages {
+		fmt.Println("- serving page: ", p.Path)
 
-		pageHandler := (*s.PageMap)[path]
 		handler := func(w http.ResponseWriter, r *http.Request) {
-			pageHandler(w)
+			p.Handler(w)
 		}
 
-		pathWithoutExt := strings.TrimSuffix(path, filepath.Ext(path))
-		mux.HandleFunc(path, handler)
+		pathWithoutExt := strings.TrimSuffix(p.Path, filepath.Ext(p.Path))
+		mux.HandleFunc(p.Path, handler)
 		mux.HandleFunc(pathWithoutExt, handler)
 
 		if pathWithoutExt == "/index" {
@@ -56,7 +54,7 @@ func (s *siteServer) SetupRoutes() http.Handler {
 	}
 
 	if s.WithSitemap {
-		sitemap := common.BuildSitemap(s.SiteDomain, sortedPaths)
+		sitemap := common.BuildSitemap(s.SiteDomain, s.Pages)
 		mux.HandleFunc("/sitemap.xml", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(sitemap))
 		})

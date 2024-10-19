@@ -14,16 +14,16 @@ type SiteBuilder interface {
 type siteBuilder struct {
 	DistDir     string
 	PublicDir   string
-	PageMap     *common.PageMap
+	Pages       *[]common.Page
 	SiteDomain  string
 	WithSitemap bool
 }
 
-func New(distDir string, publicDir string, pageMap *common.PageMap, siteDomain string, withSitemap bool) SiteBuilder {
+func New(distDir string, publicDir string, pages *[]common.Page, siteDomain string, withSitemap bool) SiteBuilder {
 	b := &siteBuilder{
 		DistDir:     distDir,
 		PublicDir:   publicDir,
-		PageMap:     pageMap,
+		Pages:       pages,
 		SiteDomain:  siteDomain,
 		WithSitemap: withSitemap,
 	}
@@ -42,15 +42,13 @@ func (b *siteBuilder) Build() error {
 		return fmt.Errorf("Could not copy public directory: %w", err)
 	}
 
-	sortedPaths := common.SortPageMapByPath(b.PageMap)
-
-	err = b.createPages(sortedPaths)
+	err = b.createPages()
 	if err != nil {
 		return fmt.Errorf("An error occurred while creating pages: %w", err)
 	}
 
 	if b.WithSitemap {
-		err = b.createSitemap(sortedPaths)
+		err = b.createSitemap()
 		if err != nil {
 			return fmt.Errorf("An error occurred while creating sitemap: %w", err)
 		}
@@ -59,25 +57,24 @@ func (b *siteBuilder) Build() error {
 	return nil
 }
 
-func (b *siteBuilder) createPages(paths []string) error {
-	for _, path := range paths {
-		fmt.Printf("- creating %s...\n", path)
-		f, err := file.CreateFile(b.DistDir + path)
+func (b *siteBuilder) createPages() error {
+	for _, p := range *b.Pages {
+		fmt.Printf("- creating %s...\n", p.Path)
+		f, err := file.CreateFile(b.DistDir + p.Path)
 		if err != nil {
 			return err
 		}
-		handler := (*b.PageMap)[path]
-		handler(f)
+		p.Handler(f)
 	}
 	return nil
 }
 
-func (b *siteBuilder) createSitemap(paths []string) error {
+func (b *siteBuilder) createSitemap() error {
 	f, err := file.CreateFile(b.DistDir + "/sitemap.xml")
 	if err != nil {
 		return err
 	}
-	sitemap := common.BuildSitemap(b.SiteDomain, paths)
+	sitemap := common.BuildSitemap(b.SiteDomain, b.Pages)
 	_, err = f.Write([]byte(sitemap))
 	return err
 }
