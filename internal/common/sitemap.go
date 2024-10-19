@@ -3,7 +3,6 @@ package common
 import (
 	"fmt"
 	"path/filepath"
-	"slices"
 	"strings"
 )
 
@@ -19,17 +18,6 @@ func BuildSitemap(domain string, pages *[]Page) string {
 	builder.WriteString("</urlset>")
 
 	return builder.String()
-}
-
-func SortPageMapByPath(pageMap *PageMap) []string {
-	keys := make([]string, len(*pageMap))
-	i := 0
-	for k := range *pageMap {
-		keys[i] = k
-		i++
-	}
-	slices.Sort(keys)
-	return keys
 }
 
 func fileToUrlPath(path string) string {
