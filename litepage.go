@@ -104,7 +104,7 @@ func WithoutSitemap() Option {
 }
 
 func (lp *litepage) Page(filePath string, handler func(w io.Writer)) error {
-	err := lp.isValidFilePath(filePath)
+	err := isValidFilePath(filePath)
 	if err != nil {
 		return fmt.Errorf("error when validating file path '%s': %w", filePath, err)
 	}
@@ -155,7 +155,7 @@ func isValidDomain(domain string) error {
 	return nil
 }
 
-func (lp *litepage) isValidFilePath(filePath string) error {
+func isValidFilePath(filePath string) error {
 	if !strings.HasPrefix(filePath, "/") {
 		return fmt.Errorf("path must start with '/'")
 	}
