@@ -22,14 +22,20 @@ func TestSiteServer(t *testing.T) {
 		"sitemap":  `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/nested/foo</loc></url></urlset>`,
 	}
 
-	testPages := &common.PageMap{
-		"/index.html": func(w io.Writer) {
-			t := template.Must(template.New("").Parse(body["index"]))
-			t.Execute(w, nil)
+	testPages := &[]common.Page{
+		{
+			Path: "/index.html",
+			Handler: func(w io.Writer) {
+				t := template.Must(template.New("").Parse(body["index"]))
+				t.Execute(w, nil)
+			},
 		},
-		"/nested/foo.htm": func(w io.Writer) {
-			t := template.Must(template.New("").Parse(body["foo"]))
-			t.Execute(w, nil)
+		{
+			Path: "/nested/foo.htm",
+			Handler: func(w io.Writer) {
+				t := template.Must(template.New("").Parse(body["foo"]))
+				t.Execute(w, nil)
+			},
 		},
 	}
 
