@@ -2,7 +2,7 @@ dev:
 	@LP_MODE=serve LP_PORT=3001 air
 
 serve:
-	@LP_MODE=serve go run ./... -lp-serve
+	@LP_MODE=serve go run ./...
 
 build:
 	@go run ./...

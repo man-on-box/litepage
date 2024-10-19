@@ -88,7 +88,7 @@ lp, err = litepage.New("hello-world.com",
 
 Create a new page by passing in the relative filename that will be used when building the site, such as `/index.html` or nested pages like `/articles/new-recipes.html`. **Note:** Paths must start with a `/`, include a file extension and be a valid filepath.
 
-Here you also pass a second function that receives the standard `io.Writer` interface. All you need to do is write your templates to this interface to generate your pages with content. This means you can use any html templating library that supports this interface, such as the Go standard [html/template](https://pkg.go.dev/html/template) package or custom packages like [templ](https://templ.guide/).
+Here you also pass a function that receives the standard `io.Writer` interface. Write your templates to this interface to generate your pages with content. This means you can use any html templating library that supports this interface, such as the Go standard [html/template](https://pkg.go.dev/html/template) package or custom packages like [templ](https://templ.guide/).
 
 ```go
 lp, _ := litepage.New("hello-world.com")
