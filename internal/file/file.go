@@ -65,13 +65,3 @@ func CopyDir(src string, dst string) error {
 	}
 	return nil
 }
-
-func RemoveDir(dir string) error {
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		return nil
-	}
-	if err := os.RemoveAll(dir); err != nil {
-		return err
-	}
-	return nil
-}

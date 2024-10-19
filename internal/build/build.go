@@ -32,12 +32,8 @@ func New(distDir string, publicDir string, pages *[]common.Page, siteDomain stri
 
 func (b *siteBuilder) Build() error {
 	fmt.Printf("LITEPAGE building site '%s'...\n", b.SiteDomain)
-	err := file.RemoveDir(b.DistDir)
-	if err != nil {
-		return fmt.Errorf("Could not remove dist directory: %w", err)
-	}
 
-	err = file.CopyDir(b.PublicDir, b.DistDir)
+	err := file.CopyDir(b.PublicDir, b.DistDir)
 	if err != nil {
 		return fmt.Errorf("Could not copy public directory: %w", err)
 	}
