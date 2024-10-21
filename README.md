@@ -15,6 +15,7 @@ Litepage is a lightweight library written in Go that simplifies building static 
 - 🎁 Builds your static site ready to be hosted on GitHub Pages, Cloudflare Pages, etc.
 - ⚡ Serves your static site locally during development
 - 🧹 No plugins or extra packages to install
+- 📍 Includes out of the box `sitemap.xml`
 - 📖 Common recipes to help with Markdown, Tailwind CSS, live reloading and more
 - 🐢 Stable API with minimal changes over time
 
@@ -88,7 +89,7 @@ lp, err := litepage.New("hello-world.com")
 Optionally you can pass configuration options when creating the instance:
 
 ```go
-lp, err = litepage.New("hello-world.com",
+lp, err := litepage.New("hello-world.com",
     litepage.WithDistDir("custom_dist"),
     litepage.WithPublicDir("custom_public"),
     litepage.WithoutSitemap(),
