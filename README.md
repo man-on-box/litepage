@@ -8,7 +8,7 @@
 
 ## What is Litepage?
 
-Litepage is a lightweight library to build your static sites, written in Go. Designed to simplify the web, Litepage allows you to build simple static sites without any unnecessary features, churn or bloat. In opposite fashion to the current frontend ecosystem, it strives for _simplicity over convenience_ with a small API surface and zero dependencies.
+Litepage is a lightweight library written in Go that simplifies building static sites. It enables you to create simple, efficient websites without unnecessary features, churn, or bloat. Prioritizing simplicity over convenience, it offers a small API surface and maintains zero additional dependencies.
 
 **Features:**
 
@@ -17,6 +17,23 @@ Litepage is a lightweight library to build your static sites, written in Go. Des
 - 🧹 No plugins or extra packages to install
 - 📖 Common recipes to help with Markdown, Tailwind CSS, live reloading and more
 - 🐢 Stable API with minimal changes over time
+
+## Motivation
+
+There are many static site generators out there, but many try to do too much, such as:
+
+- Requiring project config files
+- Requiring specific folder structures
+- Introducing a new DSL or templating syntax
+- Including features you don’t use
+- Introducing dependencies in your project
+
+Litepage stays away from this and avoids too much abstraction. You work with three methods and the standard `io.Writer` interface - that’s all! For this reason, it is easy to introduce Litepage to your existing project (or strip it out later if you don’t need it) and can be used without any library specific knowledge required.
+
+If you are looking for more opinionated and feature rich static site generators in Go, you could look at:
+
+- [Hugo](https://gohugo.io/)
+- [Zas](https://github.com/darccio/zas)
 
 ## Installation
 
