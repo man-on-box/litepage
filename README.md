@@ -12,16 +12,18 @@ Litepage is a lightweight library written in Go that simplifies building static 
 
 **Features:**
 
-- 🎁 Builds your static site ready to be hosted on GitHub Pages, Cloudflare Pages, etc.
+- 🎁 Builds your static site ready to be hosted on any static site platform like [GitHub Pages](https://pages.github.com/), [Cloudflare Pages](https://pages.cloudflare.com/), etc.
 - ⚡ Serves your static site locally during development
 - 🧹 No plugins or extra packages to install
 - 📍 Includes out of the box `sitemap.xml`
 - 📖 Common recipes to help with Markdown, Tailwind CSS, live reloading and more
-- 🐢 Stable API with minimal changes over time
+- 🐢 Stable API with no specific package knowledge required
 
 ## Motivation
 
-There are many static site generators out there, but many try to do too much, such as:
+I wanted a simple way to declaratively create static files, to host small projects that can sit still for months or years, and not become obsolete. Think landing pages, small blog sites, informational resources... basically projects that I do not want to dedicate time for routine maintenance or refactoring down the line. For these reasons I wanted a small unopinionated package that builds a static site, allows me to work with native Go interfaces and does not include any features or dependencies that I might not use. Any other features that I need, I can pick and choose them on a per project basis.
+
+Now, there are many static site generators out there, but many try to do too much, such as:
 
 - Requiring project config files
 - Requiring specific folder structures
