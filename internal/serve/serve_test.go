@@ -16,10 +16,11 @@ import (
 
 func TestSiteServer(t *testing.T) {
 	body := map[string]string{
-		"index":    "<h1>Index Page</h1>",
-		"foo":      "<h1>Foo Page</h1>",
-		"testfile": "Hello from text file",
-		"sitemap":  `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/nested/foo</loc></url></urlset>`,
+		"index":        "<h1>Index Page</h1>",
+		"nested-index": "<h1>Nested Index Page</h1>",
+		"foo":          "<h1>Foo Page</h1>",
+		"testfile":     "Hello from text file",
+		"sitemap":      `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/nested/foo</loc></url><url><loc>https://test.com/nested/</loc></url></urlset>`,
 	}
 
 	testPages := &[]common.Page{
@@ -34,6 +35,13 @@ func TestSiteServer(t *testing.T) {
 			Path: "/nested/foo.htm",
 			Handler: func(w io.Writer) {
 				t := template.Must(template.New("").Parse(body["foo"]))
+				t.Execute(w, nil)
+			},
+		},
+		{
+			Path: "/nested/index.html",
+			Handler: func(w io.Writer) {
+				t := template.Must(template.New("").Parse(body["nested-index"]))
 				t.Execute(w, nil)
 			},
 		},
@@ -68,22 +76,40 @@ func TestSiteServer(t *testing.T) {
 			expectedBody:   body["index"],
 		},
 		{
-			name:           "Can serve index page at '/index",
+			name:           "Can serve index page at '/index'",
 			path:           "/index",
 			expectedStatus: http.StatusOK,
 			expectedBody:   body["index"],
 		},
 		{
-			name:           "Can serve nested foo page at '/nested/foo.htm",
+			name:           "Can serve nested foo page at '/nested/foo.htm'",
 			path:           "/nested/foo.htm",
 			expectedStatus: http.StatusOK,
 			expectedBody:   body["foo"],
 		},
 		{
-			name:           "Can serve nested foo page at '/nested/foo",
+			name:           "Can serve nested foo page at '/nested/foo'",
 			path:           "/nested/foo",
 			expectedStatus: http.StatusOK,
 			expectedBody:   body["foo"],
+		},
+		{
+			name:           "Can serve nested index page at '/nested/index'",
+			path:           "/nested/index",
+			expectedStatus: http.StatusOK,
+			expectedBody:   body["nested-index"],
+		},
+		{
+			name:           "Can serve nested index page at '/nested', without the trailing slash",
+			path:           "/nested",
+			expectedStatus: http.StatusOK,
+			expectedBody:   body["nested-index"],
+		},
+		{
+			name:           "Can serve nested index page at '/nested/', with the trailing slash",
+			path:           "/nested/",
+			expectedStatus: http.StatusOK,
+			expectedBody:   body["nested-index"],
 		},
 		{
 			name:           "Returns 404 for non existent page",

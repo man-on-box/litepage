@@ -48,9 +48,16 @@ func (s *siteServer) SetupRoutes() http.Handler {
 		mux.HandleFunc(p.Path, handler)
 		mux.HandleFunc(pathWithoutExt, handler)
 
-		if pathWithoutExt == "/index" {
-			rootHandler = handler
+		if strings.HasSuffix(pathWithoutExt, "/index") {
+			if pathWithoutExt == "/index" {
+				rootHandler = handler
+			} else {
+				path := strings.TrimSuffix(pathWithoutExt, "/index")
+				mux.HandleFunc(path, handler)
+				mux.HandleFunc(path+"/", handler)
+			}
 		}
+
 	}
 
 	if s.WithSitemap {
