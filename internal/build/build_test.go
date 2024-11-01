@@ -14,10 +14,11 @@ import (
 
 func TestSiteBuilder(t *testing.T) {
 	body := map[string]string{
-		"index":    "<h1>Index Page</h1>",
-		"foo":      "<h1>Foo Page</h1>",
-		"testfile": "Hello from text file",
-		"sitemap":  `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/nested/foo</loc></url><url><loc>https://test.com/zzz</loc></url><url><loc>https://test.com/aaa</loc></url></urlset>`,
+		"index":          "<h1>Index Page</h1>",
+		"foo":            "<h1>Foo Page</h1>",
+		"text-file-body": "example text response",
+		"testfile":       "Hello from text file",
+		"sitemap":        `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/nested/foo</loc></url><url><loc>https://test.com/zzz</loc></url><url><loc>https://test.com/aaa</loc></url></urlset>`,
 	}
 
 	testPages := &[]common.Page{
@@ -33,6 +34,12 @@ func TestSiteBuilder(t *testing.T) {
 			Handler: func(w io.Writer) {
 				t := template.Must(template.New("").Parse(body["foo"]))
 				t.Execute(w, nil)
+			},
+		},
+		{
+			Path: "/text-file-path.txt",
+			Handler: func(w io.Writer) {
+				w.Write([]byte(body["text-file-body"]))
 			},
 		},
 		{
@@ -72,6 +79,10 @@ func TestSiteBuilder(t *testing.T) {
 		{
 			path:            "/nested/foo.htm",
 			expectedContent: body["foo"],
+		},
+		{
+			path:            "/text-file-path.txt",
+			expectedContent: body["text-file-body"],
 		},
 		{
 			path:            "/testfile.txt",
