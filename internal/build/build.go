@@ -2,6 +2,7 @@ package build
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/man-on-box/litepage/internal/common"
 	"github.com/man-on-box/litepage/internal/file"
@@ -32,6 +33,7 @@ func New(distDir string, publicDir string, pages *[]common.Page, siteDomain stri
 
 func (b *siteBuilder) Build() error {
 	fmt.Printf("LITEPAGE building site '%s'...\n", b.SiteDomain)
+	startTime := time.Now()
 
 	err := file.CopyDir(b.PublicDir, b.DistDir)
 	if err != nil {
@@ -50,6 +52,13 @@ func (b *siteBuilder) Build() error {
 		}
 	}
 
+	noOfPages := len(*b.Pages)
+	pageStr := "page"
+	if noOfPages > 1 {
+		pageStr += "s"
+	}
+
+	fmt.Printf("Built %d %s in %.0f seconds\n", len(*b.Pages), pageStr, time.Since(startTime).Seconds())
 	return nil
 }
 

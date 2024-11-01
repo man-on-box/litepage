@@ -39,7 +39,7 @@ func handleHomepage() func(w io.Writer) {
 	return func(w io.Writer) {
 		err := t.ExecuteTemplate(w, "base", data)
 		if err != nil {
-			log.Fatalf("Could not execute template: %v", err)
+			log.Printf("error while rendering template: %v", err)
 		}
 	}
 
