@@ -65,9 +65,12 @@ type litepage struct {
 // The domain parameter is required and must be a non-empty string representing the site's domain.
 // The options parameter allows for additional configurations to be applied to the Litepage instance.
 func New(domain string, options ...Option) (Litepage, error) {
+	if domain == "" {
+		return nil, fmt.Errorf("site domain is required, please provide a domain like 'catpics.com'")
+	}
 	err := isValidDomain(domain)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("site domain is not valid: %v", err)
 	}
 
 	lp := &litepage{
@@ -162,13 +165,9 @@ func (lp *litepage) BuildOrServe() error {
 }
 
 func isValidDomain(domain string) error {
-	if domain == "" {
-		return fmt.Errorf("site domain is required, please provide a domain like 'catpics.com'")
-	}
-
 	parsedUrl, err := url.Parse(domain)
 	if err != nil || parsedUrl.String() != domain {
-		return fmt.Errorf("site domain '%s' is not valid, check it does not include spaces or any illegal characters", domain)
+		return fmt.Errorf("domain '%s' is not valid, check it does not include spaces or any illegal characters", domain)
 	}
 
 	return nil

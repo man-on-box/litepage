@@ -17,12 +17,12 @@ func TestCreateNewLitepage(t *testing.T) {
 
 	t.Run("Errors if domain contains spaces", func(t *testing.T) {
 		_, err := litepage.New("invalid domain")
-		assert.ErrorContains(t, err, "site domain 'invalid domain' is not valid")
+		assert.ErrorContains(t, err, "site domain is not valid")
 	})
 
 	t.Run("Errors if domain contains illegal characters", func(t *testing.T) {
 		_, err := litepage.New("invaliddomain%=?")
-		assert.ErrorContains(t, err, "site domain 'invaliddomain%=?' is not valid")
+		assert.ErrorContains(t, err, "site domain is not valid")
 	})
 
 	t.Run("Returns no error when correct domain is supplied", func(t *testing.T) {
