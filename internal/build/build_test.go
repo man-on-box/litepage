@@ -64,7 +64,14 @@ func TestSiteBuilder(t *testing.T) {
 	err = os.WriteFile(testFilePath, []byte(body["testfile"]), 0644)
 	assert.NoError(t, err)
 
-	b := build.New(tmpDistDir, tmpPublicDir, testPages, "test.com", true)
+	c := build.Config{
+		DistDir:     tmpDistDir,
+		PublicDir:   tmpPublicDir,
+		Pages:       testPages,
+		SiteDomain:  "test.com",
+		WithSitemap: true,
+	}
+	b := build.New(c)
 	err = b.Build()
 	assert.NoError(t, err)
 

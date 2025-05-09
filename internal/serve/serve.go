@@ -17,19 +17,20 @@ type SiteServer interface {
 	SetupRoutes() http.Handler
 }
 
-type siteServer struct {
+type Config struct {
 	PublicDir   string
 	Pages       *[]common.Page
 	SiteDomain  string
 	WithSitemap bool
 }
 
-func New(publicDir string, pages *[]common.Page, siteDomain string, withSitemap bool) SiteServer {
+type siteServer struct {
+	Config Config
+}
+
+func New(config Config) SiteServer {
 	s := &siteServer{
-		PublicDir:   publicDir,
-		Pages:       pages,
-		SiteDomain:  siteDomain,
-		WithSitemap: withSitemap,
+		Config: config,
 	}
 	return s
 }
@@ -37,7 +38,7 @@ func New(publicDir string, pages *[]common.Page, siteDomain string, withSitemap 
 func (s *siteServer) SetupRoutes() http.Handler {
 	mux := http.NewServeMux()
 	var rootHandler func(w io.Writer)
-	registeredPaths := map[string]interface{}{}
+	registeredPaths := map[string]any{}
 
 	registerHandler := func(path string, handler func(w io.Writer)) {
 		registeredPaths[path] = struct{}{}
@@ -52,7 +53,7 @@ func (s *siteServer) SetupRoutes() http.Handler {
 		})
 	}
 
-	for _, p := range *s.Pages {
+	for _, p := range *s.Config.Pages {
 		fmt.Println("- serving page: ", p.Path)
 		registerHandler(p.Path, p.Handler)
 
@@ -77,8 +78,8 @@ func (s *siteServer) SetupRoutes() http.Handler {
 		}
 	}
 
-	if s.WithSitemap {
-		sitemap := common.BuildSitemap(s.SiteDomain, s.Pages)
+	if s.Config.WithSitemap {
+		sitemap := common.BuildSitemap(s.Config.SiteDomain, s.Config.Pages)
 		mux.HandleFunc("/sitemap.xml", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(sitemap))
 		})
@@ -88,7 +89,7 @@ func (s *siteServer) SetupRoutes() http.Handler {
 		if r.URL.Path == "/" && rootHandler != nil {
 			rootHandler(w)
 		} else {
-			http.ServeFile(w, r, s.PublicDir+r.URL.Path)
+			http.ServeFile(w, r, s.Config.PublicDir+r.URL.Path)
 		}
 	})
 	return mux

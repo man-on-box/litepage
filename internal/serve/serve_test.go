@@ -230,7 +230,13 @@ func TestSiteServer(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := serve.New(tmpPublicDir, testPages, "test.com", true)
+			c := serve.Config{
+				PublicDir:   tmpPublicDir,
+				Pages:       testPages,
+				SiteDomain:  "test.com",
+				WithSitemap: true,
+			}
+			s := serve.New(c)
 			routes := s.SetupRoutes()
 			server := httptest.NewServer(routes)
 			defer server.Close()

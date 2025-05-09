@@ -122,12 +122,24 @@ func (lp *litepage) Page(filePath string, handler func(w io.Writer)) error {
 }
 
 func (lp *litepage) Serve(port string) error {
-	server := serve.New(lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
+	sc := serve.Config{
+		PublicDir:   lp.publicDir,
+		Pages:       lp.pages,
+		SiteDomain:  lp.siteDomain,
+		WithSitemap: lp.withSitemap,
+	}
+	server := serve.New(sc)
 	return server.Serve(port)
 }
 
 func (lp *litepage) Build() error {
-	builder := build.New(lp.distDir, lp.publicDir, lp.pages, lp.siteDomain, lp.withSitemap)
+	bc := build.Config{
+		PublicDir:   lp.publicDir,
+		Pages:       lp.pages,
+		SiteDomain:  lp.siteDomain,
+		WithSitemap: lp.withSitemap,
+	}
+	builder := build.New(bc)
 	return builder.Build()
 }
 
