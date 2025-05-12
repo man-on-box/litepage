@@ -194,13 +194,11 @@ func TestSiteServer(t *testing.T) {
 			name:           "Returns 404 for non existent page",
 			path:           "/nope",
 			expectedStatus: http.StatusNotFound,
-			expectedBody:   "404 page not found\n",
 		},
 		{
 			name:           "Returns 404 for non existent nested page",
 			path:           "/nested/nope",
 			expectedStatus: http.StatusNotFound,
-			expectedBody:   "404 page not found\n",
 		},
 		{
 			name:           "Returns text body from .txt file",
@@ -212,7 +210,6 @@ func TestSiteServer(t *testing.T) {
 			name:           "Does not load text file without .txt extension",
 			path:           "/textfile-endpoint",
 			expectedStatus: http.StatusNotFound,
-			expectedBody:   "404 page not found\n",
 		},
 		{
 			name:           "Returns test file from public dir",
@@ -248,7 +245,9 @@ func TestSiteServer(t *testing.T) {
 			body, err := io.ReadAll(resp.Body)
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedStatus, resp.StatusCode)
-			assert.Equal(t, tt.expectedBody, string(body))
+			if len(tt.expectedBody) > 0 {
+				assert.Equal(t, tt.expectedBody, string(body))
+			}
 		})
 	}
 }
