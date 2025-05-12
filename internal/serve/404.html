@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>404 - Not Found</title>
+    <title>404: Not Found</title>
     <style>
       :root {
         --gray-10: hsl(258, 7%, 10%);
@@ -41,8 +41,8 @@
       }
 
       .litepage-icon {
-        width: 120px;
-        height: 120px;
+        width: 100px;
+        height: 100px;
       }
 
       pre,
@@ -52,6 +52,10 @@
         border: 1px solid var(--gray-70);
         border-radius: 3px;
         font-size: 1.3em;
+        max-width: 90vw;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
 
       .center {
@@ -146,20 +150,20 @@
           />
         </g>
       </svg>
-      <h1><span class="text-accent">404</span> Not Found</h1>
-      <pre>Path: {{ .UrlPath }}</pre>
+      <h1><span class="text-accent">404:</span> Not Found</h1>
+      <pre title="{{ .UrlPath }}">Path: {{ .UrlPath }}</pre>
       <p>
         Make sure you setup a page at this path, or that the file exists in your
         <strong>public</strong> directory.
       </p>
       {{if and .BasePath .ShowBasePathError}}
       <p>
-        You have a <strong>base path</strong> configured, you might be looking
-        for:
+        <i>Psssst!</i> You have a <strong>base path</strong> configured, you
+        might be looking for:
       </p>
       <p>
         <a class="text-accent" href="{{.BasePath}}{{.UrlPath}}"
-          >{{.BasePath}}{{.UrlPath}}</a
+          ><strong>{{.BasePath}}{{.UrlPath}}</strong></a
         >
       </p>
       {{end}}
