@@ -136,6 +136,7 @@ func (lp *litepage) Serve(port string) error {
 		PublicDir:   lp.publicDir,
 		Pages:       lp.pages,
 		SiteDomain:  lp.siteDomain,
+		BasePath:    lp.basePath,
 		WithSitemap: lp.withSitemap,
 	}
 	server := serve.New(sc)
