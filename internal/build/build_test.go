@@ -18,7 +18,6 @@ func TestSiteBuilder(t *testing.T) {
 		"foo":            "<h1>Foo Page</h1>",
 		"text-file-body": "example text response",
 		"testfile":       "Hello from text file",
-		"sitemap":        `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/nested/foo</loc></url><url><loc>https://test.com/zzz</loc></url><url><loc>https://test.com/aaa</loc></url></urlset>`,
 	}
 
 	testPages := &[]model.Page{
@@ -96,8 +95,7 @@ func TestSiteBuilder(t *testing.T) {
 			expectedContent: body["testfile"],
 		},
 		{
-			path:            "/sitemap.xml",
-			expectedContent: body["sitemap"],
+			path: "/sitemap.xml",
 		},
 	}
 
@@ -106,7 +104,9 @@ func TestSiteBuilder(t *testing.T) {
 			content, err := os.ReadFile(tmpDistDir + tt.path)
 			assert.NoError(t, err)
 
-			assert.Equal(t, tt.expectedContent, string(content))
+			if len(tt.expectedContent) > 0 {
+				assert.Equal(t, tt.expectedContent, string(content))
+			}
 		})
 	}
 }

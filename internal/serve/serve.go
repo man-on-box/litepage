@@ -94,7 +94,7 @@ func (s *siteServer) SetupRoutes() http.Handler {
 	}
 
 	if s.Config.WithSitemap {
-		smap := sitemap.BuildSitemap(s.Config.SiteDomain, s.Config.Pages)
+		smap := sitemap.Build(s.Config.SiteDomain, s.Config.BasePath, s.Config.Pages)
 		mux.HandleFunc(s.Config.BasePath+"/sitemap.xml", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(smap))
 		})

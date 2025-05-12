@@ -18,6 +18,7 @@ type Config struct {
 	PublicDir   string
 	Pages       *[]model.Page
 	SiteDomain  string
+	BasePath    string
 	WithSitemap bool
 }
 
@@ -80,7 +81,7 @@ func (b *siteBuilder) createSitemap() error {
 	if err != nil {
 		return err
 	}
-	smap := sitemap.BuildSitemap(b.Config.SiteDomain, b.Config.Pages)
+	smap := sitemap.Build(b.Config.SiteDomain, b.Config.BasePath, b.Config.Pages)
 	_, err = f.Write([]byte(smap))
 	return err
 }

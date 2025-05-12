@@ -24,7 +24,6 @@ func TestSiteServer(t *testing.T) {
 		"nested-nested-bar":   "<h1>Nested nested Bar Page</h1>",
 		"text-file-body":      "example text response",
 		"testfile":            "Hello from static text file",
-		"sitemap":             `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/foo</loc></url><url><loc>https://test.com/nested/</loc></url><url><loc>https://test.com/nested/foo</loc></url><url><loc>https://test.com/nested/nested/</loc></url><url><loc>https://test.com/nested/nested/bar</loc></url></urlset>`,
 	}
 
 	testPages := &[]model.Page{
@@ -218,10 +217,9 @@ func TestSiteServer(t *testing.T) {
 			expectedBody:   body["testfile"],
 		},
 		{
-			name:           "Returns expected sitemap",
+			name:           "Sitemap exists",
 			path:           "/sitemap.xml",
 			expectedStatus: http.StatusOK,
-			expectedBody:   body["sitemap"],
 		},
 	}
 

@@ -148,6 +148,7 @@ func (lp *litepage) Build() error {
 		PublicDir:   lp.publicDir,
 		Pages:       lp.pages,
 		SiteDomain:  lp.siteDomain,
+		BasePath:    lp.basePath,
 		WithSitemap: lp.withSitemap,
 	}
 	builder := build.New(bc)
