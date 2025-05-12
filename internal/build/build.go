@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/man-on-box/litepage/internal/common"
 	"github.com/man-on-box/litepage/internal/file"
+	"github.com/man-on-box/litepage/internal/model"
+	"github.com/man-on-box/litepage/internal/sitemap"
 )
 
 type SiteBuilder interface {
@@ -15,7 +16,7 @@ type SiteBuilder interface {
 type Config struct {
 	DistDir     string
 	PublicDir   string
-	Pages       *[]common.Page
+	Pages       *[]model.Page
 	SiteDomain  string
 	WithSitemap bool
 }
@@ -79,7 +80,7 @@ func (b *siteBuilder) createSitemap() error {
 	if err != nil {
 		return err
 	}
-	sitemap := common.BuildSitemap(b.Config.SiteDomain, b.Config.Pages)
-	_, err = f.Write([]byte(sitemap))
+	smap := sitemap.BuildSitemap(b.Config.SiteDomain, b.Config.Pages)
+	_, err = f.Write([]byte(smap))
 	return err
 }

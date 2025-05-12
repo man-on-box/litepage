@@ -9,7 +9,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/man-on-box/litepage/internal/common"
+	"github.com/man-on-box/litepage/internal/model"
 	"github.com/man-on-box/litepage/internal/serve"
 	"github.com/stretchr/testify/assert"
 )
@@ -27,7 +27,7 @@ func TestSiteServer(t *testing.T) {
 		"sitemap":             `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/foo</loc></url><url><loc>https://test.com/nested/</loc></url><url><loc>https://test.com/nested/foo</loc></url><url><loc>https://test.com/nested/nested/</loc></url><url><loc>https://test.com/nested/nested/bar</loc></url></urlset>`,
 	}
 
-	testPages := &[]common.Page{
+	testPages := &[]model.Page{
 		{
 			Path: "/index.html",
 			Handler: func(w io.Writer) {

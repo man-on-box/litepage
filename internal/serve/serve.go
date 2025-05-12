@@ -11,7 +11,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/man-on-box/litepage/internal/common"
+	"github.com/man-on-box/litepage/internal/model"
+	"github.com/man-on-box/litepage/internal/sitemap"
 )
 
 const defaultPort = "3000"
@@ -28,7 +29,7 @@ type SiteServer interface {
 
 type Config struct {
 	PublicDir   string
-	Pages       *[]common.Page
+	Pages       *[]model.Page
 	SiteDomain  string
 	BasePath    string
 	WithSitemap bool
@@ -93,9 +94,9 @@ func (s *siteServer) SetupRoutes() http.Handler {
 	}
 
 	if s.Config.WithSitemap {
-		sitemap := common.BuildSitemap(s.Config.SiteDomain, s.Config.Pages)
+		smap := sitemap.BuildSitemap(s.Config.SiteDomain, s.Config.Pages)
 		mux.HandleFunc(s.Config.BasePath+"/sitemap.xml", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(sitemap))
+			w.Write([]byte(smap))
 		})
 	}
 

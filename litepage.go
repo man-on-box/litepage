@@ -23,7 +23,7 @@ import (
 	"strings"
 
 	"github.com/man-on-box/litepage/internal/build"
-	"github.com/man-on-box/litepage/internal/common"
+	"github.com/man-on-box/litepage/internal/model"
 	"github.com/man-on-box/litepage/internal/serve"
 )
 
@@ -57,7 +57,7 @@ type litepage struct {
 	publicDir   string
 	basePath    string
 	withSitemap bool
-	pages       *[]common.Page
+	pages       *[]model.Page
 	pathMap     map[string]bool
 }
 
@@ -79,7 +79,7 @@ func New(domain string, options ...Option) (Litepage, error) {
 		publicDir:   "public",
 		withSitemap: true,
 		pathMap:     map[string]bool{},
-		pages:       &[]common.Page{},
+		pages:       &[]model.Page{},
 	}
 
 	for _, opt := range options {
@@ -126,7 +126,7 @@ func (lp *litepage) Page(filePath string, handler func(w io.Writer)) error {
 	// Because there is no native ordered map in Go, I opted to use a slice to preserve
 	// page insertion order, and copy the file path into a map for o(1) lookup time.
 	lp.pathMap[filePath] = true
-	*lp.pages = append(*lp.pages, common.Page{Path: filePath, Handler: handler})
+	*lp.pages = append(*lp.pages, model.Page{Path: filePath, Handler: handler})
 
 	return nil
 }

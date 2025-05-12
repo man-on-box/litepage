@@ -1,12 +1,14 @@
-package common
+package sitemap
 
 import (
 	"fmt"
 	"path/filepath"
 	"strings"
+
+	"github.com/man-on-box/litepage/internal/model"
 )
 
-func BuildSitemap(domain string, pages *[]Page) string {
+func BuildSitemap(domain string, pages *[]model.Page) string {
 	var builder strings.Builder
 
 	builder.WriteString(`<?xml version="1.0" encoding="UTF-8"?>`)
