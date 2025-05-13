@@ -248,4 +248,31 @@ func TestSiteServer(t *testing.T) {
 			}
 		})
 	}
+
+	for _, tt := range tests {
+		t.Run(tt.name+" with base path", func(t *testing.T) {
+			c := serve.Config{
+				PublicDir:   tmpPublicDir,
+				Pages:       testPages,
+				SiteDomain:  "test.com",
+				BasePath:    "/test",
+				WithSitemap: true,
+			}
+			s := serve.New(c)
+			routes := s.SetupRoutes()
+			server := httptest.NewServer(routes)
+			defer server.Close()
+
+			resp, err := http.Get(server.URL + c.BasePath + tt.path)
+			assert.NoError(t, err)
+			defer resp.Body.Close()
+
+			body, err := io.ReadAll(resp.Body)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expectedStatus, resp.StatusCode)
+			if len(tt.expectedBody) > 0 {
+				assert.Equal(t, tt.expectedBody, string(body))
+			}
+		})
+	}
 }

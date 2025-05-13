@@ -17,14 +17,12 @@ package litepage
 import (
 	"fmt"
 	"io"
-	"net/url"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/man-on-box/litepage/internal/build"
 	"github.com/man-on-box/litepage/internal/model"
 	"github.com/man-on-box/litepage/internal/serve"
+	"github.com/man-on-box/litepage/internal/validate"
 )
 
 type Litepage interface {
@@ -49,7 +47,7 @@ type Litepage interface {
 	Page(filePath string, handler func(w io.Writer)) error
 }
 
-type Option func(*litepage)
+type Option func(*litepage) error
 
 type litepage struct {
 	siteDomain  string
@@ -68,7 +66,7 @@ func New(domain string, options ...Option) (Litepage, error) {
 	if domain == "" {
 		return nil, fmt.Errorf("site domain is required, please provide a domain like 'catpics.com'")
 	}
-	err := isValidDomain(domain)
+	err := validate.IsValidDomain(domain)
 	if err != nil {
 		return nil, fmt.Errorf("site domain is not valid: %v", err)
 	}
@@ -83,38 +81,47 @@ func New(domain string, options ...Option) (Litepage, error) {
 	}
 
 	for _, opt := range options {
-		opt(lp)
+		if err := opt(lp); err != nil {
+			return nil, err
+		}
 	}
 
 	return lp, nil
 }
 
 func WithDistDir(distDis string) Option {
-	return func(lp *litepage) {
+	return func(lp *litepage) error {
 		lp.distDir = distDis
+		return nil
 	}
 }
 
 func WithPublicDir(publicDir string) Option {
-	return func(lp *litepage) {
+	return func(lp *litepage) error {
 		lp.publicDir = publicDir
+		return nil
 	}
 }
 
 func WithoutSitemap() Option {
-	return func(lp *litepage) {
+	return func(lp *litepage) error {
 		lp.withSitemap = false
+		return nil
 	}
 }
 
 func WithBasePath(basePath string) Option {
-	return func(lp *litepage) {
+	return func(lp *litepage) error {
+		if err := validate.IsValidBasePath(basePath); err != nil {
+			return fmt.Errorf("base path is not valid '%s': %w", basePath, err)
+		}
 		lp.basePath = basePath
+		return nil
 	}
 }
 
 func (lp *litepage) Page(filePath string, handler func(w io.Writer)) error {
-	err := isValidFilePath(filePath)
+	err := validate.IsValidFilePath(filePath)
 	if err != nil {
 		return fmt.Errorf("error when validating file path '%s': %w", filePath, err)
 	}
@@ -164,38 +171,4 @@ func (lp *litepage) BuildOrServe() error {
 	} else {
 		return lp.Build()
 	}
-}
-
-func isValidDomain(domain string) error {
-	parsedUrl, err := url.Parse(domain)
-	if err != nil || parsedUrl.String() != domain {
-		return fmt.Errorf("domain '%s' is not valid, check it does not include spaces or any illegal characters", domain)
-	}
-
-	return nil
-}
-
-func isValidFilePath(filePath string) error {
-	if !strings.HasPrefix(filePath, "/") {
-		return fmt.Errorf("path must start with '/'")
-	}
-
-	parsedURL, err := url.Parse(filePath)
-	if err != nil {
-		return fmt.Errorf("failed to parse path: %v", err)
-	}
-
-	if parsedURL.String() != filePath {
-		return fmt.Errorf("path contains invalid characters")
-	}
-
-	if strings.Contains(parsedURL.Path, "..") {
-		return fmt.Errorf("path contains illegal '..' for directory traversal")
-	}
-
-	ext := filepath.Ext(parsedURL.Path)
-	if ext == "" {
-		return fmt.Errorf("path must end with a file extension e.g. '.html'")
-	}
-	return nil
 }
