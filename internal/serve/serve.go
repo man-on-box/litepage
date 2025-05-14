@@ -19,7 +19,6 @@ const defaultPort = "3000"
 
 //go:embed 404.html
 var notFoundHTML string
-
 var notFoundTmpl = template.Must(template.New("404").Parse(notFoundHTML))
 
 type SiteServer interface {
