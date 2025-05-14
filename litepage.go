@@ -152,6 +152,7 @@ func (lp *litepage) Serve(port string) error {
 
 func (lp *litepage) Build() error {
 	bc := build.Config{
+		DistDir:     lp.distDir,
 		PublicDir:   lp.publicDir,
 		Pages:       lp.pages,
 		SiteDomain:  lp.siteDomain,
