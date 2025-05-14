@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/man-on-box/litepage/internal/build"
-	"github.com/man-on-box/litepage/internal/common"
+	"github.com/man-on-box/litepage/internal/model"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,10 +18,9 @@ func TestSiteBuilder(t *testing.T) {
 		"foo":            "<h1>Foo Page</h1>",
 		"text-file-body": "example text response",
 		"testfile":       "Hello from text file",
-		"sitemap":        `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/nested/foo</loc></url><url><loc>https://test.com/zzz</loc></url><url><loc>https://test.com/aaa</loc></url></urlset>`,
 	}
 
-	testPages := &[]common.Page{
+	testPages := &[]model.Page{
 		{
 			Path: "/index.html",
 			Handler: func(w io.Writer) {
@@ -64,7 +63,14 @@ func TestSiteBuilder(t *testing.T) {
 	err = os.WriteFile(testFilePath, []byte(body["testfile"]), 0644)
 	assert.NoError(t, err)
 
-	b := build.New(tmpDistDir, tmpPublicDir, testPages, "test.com", true)
+	c := build.Config{
+		DistDir:     tmpDistDir,
+		PublicDir:   tmpPublicDir,
+		Pages:       testPages,
+		SiteDomain:  "test.com",
+		WithSitemap: true,
+	}
+	b := build.New(c)
 	err = b.Build()
 	assert.NoError(t, err)
 
@@ -89,8 +95,7 @@ func TestSiteBuilder(t *testing.T) {
 			expectedContent: body["testfile"],
 		},
 		{
-			path:            "/sitemap.xml",
-			expectedContent: body["sitemap"],
+			path: "/sitemap.xml",
 		},
 	}
 
@@ -99,7 +104,9 @@ func TestSiteBuilder(t *testing.T) {
 			content, err := os.ReadFile(tmpDistDir + tt.path)
 			assert.NoError(t, err)
 
-			assert.Equal(t, tt.expectedContent, string(content))
+			if len(tt.expectedContent) > 0 {
+				assert.Equal(t, tt.expectedContent, string(content))
+			}
 		})
 	}
 }

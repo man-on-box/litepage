@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>404: Not Found</title>
+    <style>
+      :root {
+        --gray-10: hsl(258, 7%, 10%);
+        --gray-20: hsl(258, 7%, 20%);
+        --gray-30: hsl(258, 7%, 30%);
+        --gray-40: hsl(258, 7%, 40%);
+        --gray-50: hsl(258, 7%, 50%);
+        --gray-60: hsl(258, 7%, 60%);
+        --gray-70: hsl(258, 7%, 70%);
+        --gray-80: hsl(258, 7%, 80%);
+        --gray-90: hsl(258, 7%, 90%);
+        --black: #0f0f0f;
+        --accent: #ff66a9;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--black);
+        color-scheme: dark;
+        accent-color: var(--accent);
+      }
+
+      body {
+        color: var(--gray-90);
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        margin: 0;
+      }
+
+      .text-accent {
+        color: var(--accent);
+      }
+
+      .litepage-icon {
+        width: 100px;
+        height: 100px;
+      }
+
+      pre,
+      code {
+        padding: 8px;
+        background: var(--gray-20);
+        border: 1px solid var(--gray-70);
+        border-radius: 3px;
+        font-size: 1.3em;
+        max-width: 90vw;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        min-height: 2.2rem;
+      }
+
+      .center {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="center">
+      <svg
+        class="litepage-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 500 500"
+      >
+        <defs>
+          <filter
+            id="b"
+            color-interpolation-filters="sRGB"
+            x="-50%"
+            y="-50%"
+            width="200%"
+            height="200%"
+          >
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4" />
+            <feOffset />
+            <feComponentTransfer result="offsetblur">
+              <feFuncA type="linear" slope="1.3" />
+            </feComponentTransfer>
+            <feFlood flood-color="#ff66a9" />
+            <feComposite in2="offsetblur" operator="in" />
+            <feMerge>
+              <feMergeNode />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter
+            id="c"
+            color-interpolation-filters="sRGB"
+            x="-50%"
+            y="-50%"
+            width="200%"
+            height="200%"
+          >
+            <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+            <feOffset />
+            <feComponentTransfer result="offsetblur">
+              <feFuncA type="linear" slope="1.3" />
+            </feComponentTransfer>
+            <feFlood flood-color="#fdd700" />
+            <feComposite in2="offsetblur" operator="in" />
+            <feMerge>
+              <feMergeNode />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <linearGradient
+            gradientUnits="userSpaceOnUse"
+            x1="535.209"
+            y1="91.777"
+            x2="535.209"
+            y2="292.234"
+            id="a"
+            gradientTransform="matrix(1.2425 2.17753 -3.88523 2.12522 859.915 -995.336)"
+          >
+            <stop offset="0" stop-color="rgb(47.451% 100% 96.863%)" />
+            <stop offset="1" stop-color="rgb(0% 59.265% 57.001%)" />
+          </linearGradient>
+        </defs>
+        <g paint-order="fill">
+          <path
+            d="M739.607 162.49q32.019-62.699 64.037 0l207.308 405.952q32.019 62.699-32.019 62.699H564.318q-64.038 0-32.019-62.699Z"
+            filter="none"
+            fill="url(#a)"
+            transform="translate(-521.625 -131.14)"
+          />
+          <path
+            d="m846.91 247.215 46.503 91.062-314.037 137.979 38.688-75.759L846.91 247.215Z"
+            fill="#ff66a9"
+            filter="url(#b)"
+            transform="translate(-521.625 -131.14)"
+          />
+          <path
+            d="m892.349 336.193 48.546 95.064-395.844 112.215 35.075-68.685 312.223-138.594Z"
+            fill="#fdd600"
+            filter="url(#c)"
+            transform="translate(-521.625 -131.14)"
+          />
+        </g>
+      </svg>
+      <h1><span class="text-accent">404:</span> Not Found</h1>
+      <pre title="{{ .UrlPath }}">Path: {{ .UrlPath }}</pre>
+      <p>
+        Make sure you setup a page at this path, or that the file exists in your
+        <strong>public</strong> directory.
+      </p>
+      {{if and .BasePath .ShowBasePathError}}
+      <p>
+        <i>Psssst!</i> You have a <strong>base path</strong> configured, you
+        might be looking for:
+      </p>
+      <p>
+        <a class="text-accent" href="{{.BasePath}}{{.UrlPath}}"
+          ><strong>{{.BasePath}}{{.UrlPath}}</strong></a
+        >
+      </p>
+      {{end}}
+    </main>
+  </body>
+</html>

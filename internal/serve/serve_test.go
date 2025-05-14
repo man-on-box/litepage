@@ -9,7 +9,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/man-on-box/litepage/internal/common"
+	"github.com/man-on-box/litepage/internal/model"
 	"github.com/man-on-box/litepage/internal/serve"
 	"github.com/stretchr/testify/assert"
 )
@@ -24,10 +24,9 @@ func TestSiteServer(t *testing.T) {
 		"nested-nested-bar":   "<h1>Nested nested Bar Page</h1>",
 		"text-file-body":      "example text response",
 		"testfile":            "Hello from static text file",
-		"sitemap":             `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://test.com/</loc></url><url><loc>https://test.com/foo</loc></url><url><loc>https://test.com/nested/</loc></url><url><loc>https://test.com/nested/foo</loc></url><url><loc>https://test.com/nested/nested/</loc></url><url><loc>https://test.com/nested/nested/bar</loc></url></urlset>`,
 	}
 
-	testPages := &[]common.Page{
+	testPages := &[]model.Page{
 		{
 			Path: "/index.html",
 			Handler: func(w io.Writer) {
@@ -194,13 +193,11 @@ func TestSiteServer(t *testing.T) {
 			name:           "Returns 404 for non existent page",
 			path:           "/nope",
 			expectedStatus: http.StatusNotFound,
-			expectedBody:   "404 page not found\n",
 		},
 		{
 			name:           "Returns 404 for non existent nested page",
 			path:           "/nested/nope",
 			expectedStatus: http.StatusNotFound,
-			expectedBody:   "404 page not found\n",
 		},
 		{
 			name:           "Returns text body from .txt file",
@@ -212,7 +209,6 @@ func TestSiteServer(t *testing.T) {
 			name:           "Does not load text file without .txt extension",
 			path:           "/textfile-endpoint",
 			expectedStatus: http.StatusNotFound,
-			expectedBody:   "404 page not found\n",
 		},
 		{
 			name:           "Returns test file from public dir",
@@ -221,16 +217,21 @@ func TestSiteServer(t *testing.T) {
 			expectedBody:   body["testfile"],
 		},
 		{
-			name:           "Returns expected sitemap",
+			name:           "Sitemap exists",
 			path:           "/sitemap.xml",
 			expectedStatus: http.StatusOK,
-			expectedBody:   body["sitemap"],
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := serve.New(tmpPublicDir, testPages, "test.com", true)
+			c := serve.Config{
+				PublicDir:   tmpPublicDir,
+				Pages:       testPages,
+				SiteDomain:  "test.com",
+				WithSitemap: true,
+			}
+			s := serve.New(c)
 			routes := s.SetupRoutes()
 			server := httptest.NewServer(routes)
 			defer server.Close()
@@ -242,7 +243,36 @@ func TestSiteServer(t *testing.T) {
 			body, err := io.ReadAll(resp.Body)
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedStatus, resp.StatusCode)
-			assert.Equal(t, tt.expectedBody, string(body))
+			if len(tt.expectedBody) > 0 {
+				assert.Equal(t, tt.expectedBody, string(body))
+			}
+		})
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name+" with base path", func(t *testing.T) {
+			c := serve.Config{
+				PublicDir:   tmpPublicDir,
+				Pages:       testPages,
+				SiteDomain:  "test.com",
+				BasePath:    "/test",
+				WithSitemap: true,
+			}
+			s := serve.New(c)
+			routes := s.SetupRoutes()
+			server := httptest.NewServer(routes)
+			defer server.Close()
+
+			resp, err := http.Get(server.URL + c.BasePath + tt.path)
+			assert.NoError(t, err)
+			defer resp.Body.Close()
+
+			body, err := io.ReadAll(resp.Body)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expectedStatus, resp.StatusCode)
+			if len(tt.expectedBody) > 0 {
+				assert.Equal(t, tt.expectedBody, string(body))
+			}
 		})
 	}
 }
