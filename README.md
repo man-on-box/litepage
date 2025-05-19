@@ -4,10 +4,9 @@
 <div align="center">
     <br />
     <p><strong>Litepage</strong> - build sites simple</p>
-    <div>
-    [![Go Report Card](https://goreportcard.com/badge/github.com/man-on-box/litepage)](https://goreportcard.com/report/github.com/man-on-box/litepage)
-    </div>
 </div>
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/man-on-box/litepage)](https://goreportcard.com/report/github.com/man-on-box/litepage)
 
 ## What is Litepage?
 
