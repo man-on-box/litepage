@@ -3,10 +3,12 @@
 </div>
 <div align="center">
     <br />
-    <p><strong>Litepage</strong> - build sites simple</p>
+    <p><strong>Litepage</strong> - build sites simple.</p>
 </div>
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/man-on-box/litepage.svg)](https://pkg.go.dev/github.com/man-on-box/litepage)
 [![Go Report Card](https://goreportcard.com/badge/github.com/man-on-box/litepage)](https://goreportcard.com/report/github.com/man-on-box/litepage)
+[![Test](https://github.com/man-on-box/litepage/actions/workflows/test.yaml/badge.svg)](https://github.com/man-on-box/litepage/actions/workflows/test.yaml)
 
 ## What is Litepage?
 
