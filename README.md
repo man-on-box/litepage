@@ -3,40 +3,35 @@
 </div>
 <div align="center">
     <br />
-    <p><strong>Litepage</strong> - a minimalist, zero dependency static site generator</p>
+    <p><strong>Litepage</strong> - build sites simple.</p>
 </div>
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/man-on-box/litepage.svg)](https://pkg.go.dev/github.com/man-on-box/litepage)
+[![Go Report Card](https://goreportcard.com/badge/github.com/man-on-box/litepage)](https://goreportcard.com/report/github.com/man-on-box/litepage)
+[![Test](https://github.com/man-on-box/litepage/actions/workflows/test.yaml/badge.svg)](https://github.com/man-on-box/litepage/actions/workflows/test.yaml)
 
 ## What is Litepage?
 
-Litepage is a lightweight library written in Go that simplifies building static sites. It enables you to create simple, efficient websites without unnecessary features, churn, or bloat. Prioritizing simplicity over convenience, it offers a small API surface and maintains zero additional dependencies.
+Litepage is a tiny library to help you build static sites in Go. Build your HTML templates in Go and Litepage can build your pages for production and serve them locally during development, while adding only one dependency into your project.
 
 **Features:**
 
 - 🎁 Builds your static site ready to be hosted on any static site platform like [GitHub Pages](https://pages.github.com/), [Cloudflare Pages](https://pages.cloudflare.com/), etc.
 - ⚡ Serves your static site locally during development
-- 🧹 No plugins or extra packages to install
+- 🧹 Maintains zero additional dependencies
 - 📍 Includes out of the box `sitemap.xml`
 - 📖 Common recipes to help with Markdown, Tailwind CSS, live reloading and more
 - 🐢 Stable API with no specific package knowledge required
 
 ## Motivation
 
-I wanted a simple way to declaratively create static files, to host small projects that can sit still for months or years, and not become obsolete. Think landing pages, small blog sites, informational resources... basically projects that I do not want to dedicate time for routine maintenance or refactoring down the line. For these reasons I wanted a small unopinionated package that builds a static site, allows me to work with native Go interfaces and does not include any features or dependencies that I might not use. Any other features that I need, I can pick and choose them on a per project basis.
+Litepage is more of a philosophy than a library. It is an approach to build your sites in native Go, leveraging its standard library. Litepage can then build your site for production, and serve it whilst you are developing. This gives you full control on how you build your site, and a stable project that will live longer than the average frontend framework.
 
-Now, there are many static site generators out there, but many try to do too much, such as:
+If your site is serving static content with little client side interaction, you **don't need** a server and **you don't** need a framework.
 
-- Requiring project config files
-- Requiring specific folder structures
-- Introducing a new DSL or templating syntax
-- Including features you don’t use
-- Introducing dependencies in your project
+In todays world of JS frameworks, the reality is that most of your time is spent on **maintenance, not development**. They promise performance, but the best way to build performant sites is to not ship bloat. A site does not inherently run faster on a users machine because you used a certain framework, but it _can run slower_.
 
-Litepage stays away from this and avoids too much abstraction. You work with three methods and the standard `io.Writer` interface - that’s all! For this reason, it is easy to introduce Litepage to your existing project (or strip it out later if you don’t need it) and can be used without any library specific knowledge required.
-
-If you are looking for more opinionated and feature rich static site generators in Go, you could look at:
-
-- [Hugo](https://gohugo.io/)
-- [Zas](https://github.com/darccio/zas)
+The best way to give your users peformance, is to **ship the bare minimum HTML, CSS and JS required**.
 
 ## Installation
 
@@ -46,7 +41,7 @@ go get github.com/man-on-box/litepage
 
 ## Project structure
 
-The only folders Litepage interacts with by default are:
+The only directories Litepage interacts with by default are:
 
 - `public/*` - to place your static assets (js, css, icons, images, etc.)
 - `dist/*` - contains the outputted site when built, ready to be hosted
@@ -153,7 +148,7 @@ This will start a web server at http://localhost:3000 to preview your site.
 
 ### Build or Serve
 
-Both methods explicitly build or serve your site, however if you want to be able to serve your site locally, while building it during CI, you can take advantage of the `BuildOrServe` method.
+The above methods explicitly build or serve your site, however if you want to be able to serve your site locally, while building it during CI, you can take advantage of the `BuildOrServe` method.
 
 ```go
 lp, _ := litepage.New("hello-world.com")
@@ -163,7 +158,7 @@ lp, _ := litepage.New("hello-world.com")
 err := lp.BuildOrServe()
 ```
 
-By default, this will build your site the same as if you had called `Build`, however you can optionally `Serve` your site with the use of environment variables.
+By default, this will build your site the same as if you had called `Build`, though you can optionally `Serve` your site with the use of environment variables.
 
 The following environment variables are checked when calling this method:
 
@@ -174,6 +169,6 @@ See the [example Makefile](./example/Makefile) on how you could build or serve b
 
 ## Contributing
 
-If you like this project, consider giving it a star ⭐.
+If you like this project, consider giving it a star ⭐, it is much appreciated!
 
 If you have any feedback please raise it as an issue 🎁.

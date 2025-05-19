@@ -89,6 +89,7 @@ func New(domain string, options ...Option) (Litepage, error) {
 	return lp, nil
 }
 
+// Specify the directory to place your site when building. By default it is "dist".
 func WithDistDir(distDis string) Option {
 	return func(lp *litepage) error {
 		lp.distDir = distDis
@@ -96,6 +97,7 @@ func WithDistDir(distDis string) Option {
 	}
 }
 
+// Specify the directory where your public assets are. By default it is "public".
 func WithPublicDir(publicDir string) Option {
 	return func(lp *litepage) error {
 		lp.publicDir = publicDir
@@ -103,6 +105,8 @@ func WithPublicDir(publicDir string) Option {
 	}
 }
 
+// By default a sitemap.xml is created mapping all pages of the static site. You can disable this
+// behavior by specifying without a sitemap.
 func WithoutSitemap() Option {
 	return func(lp *litepage) error {
 		lp.withSitemap = false
@@ -110,6 +114,7 @@ func WithoutSitemap() Option {
 	}
 }
 
+// Specify the base path of your site, if it is not the root of the domain. If set, all static assets and links should add the base as a prefix. The path should always start with a ”/” and not end with a trailing slash (otherwise an error will be returned).
 func WithBasePath(basePath string) Option {
 	return func(lp *litepage) error {
 		if err := validate.IsValidBasePath(basePath); err != nil {
