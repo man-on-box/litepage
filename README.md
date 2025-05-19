@@ -25,13 +25,13 @@ Litepage is a tiny library to help you build static sites in Go. Build your HTML
 
 ## Motivation
 
-If your site is serving static content with little client side interaction, you **don't need** a server and **you don't** need a framework. In todays world of JS frameworks, the reality is that most of your time is spent on **maintenance, not development**.
+Litepage is more of a philosophy than a library. It is an approach to build your sites in native Go, leveraging its standard library. Litepage can then build your site for production, and serve it whilst you are developing. This gives you full control on how you build your site, and a stable project that will live longer than the average frontend framework.
 
-Frameworks promise performance, but the best way to build performant sites is to not ship bloat. A site does not inherently run faster on a users machine because you used a certain framework, but it _can run slower_.
+If your site is serving static content with little client side interaction, you **don't need** a server and **you don't** need a framework.
+
+In todays world of JS frameworks, the reality is that most of your time is spent on **maintenance, not development**. They promise performance, but the best way to build performant sites is to not ship bloat. A site does not inherently run faster on a users machine because you used a certain framework, but it _can run slower_.
 
 The best way to give your users peformance, is to **ship the bare minimum HTML, CSS and JS required**.
-
-Litepage is more of a philosophy than a library. It is an approach to build your sites in native Go, leveraging its standard library. Litepage can then build your site for production, and serve it whilst you are developing. This gives you full control on how you build your site, and a stable project that will live longer than the average frontend framework.
 
 ## Installation
 
