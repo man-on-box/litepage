@@ -89,7 +89,7 @@ func New(domain string, options ...Option) (Litepage, error) {
 	return lp, nil
 }
 
-// Specify the directory to place your site when building. By default it is "dist"
+// Specify the directory to place your site when building. By default it is "dist".
 func WithDistDir(distDis string) Option {
 	return func(lp *litepage) error {
 		lp.distDir = distDis
@@ -97,7 +97,7 @@ func WithDistDir(distDis string) Option {
 	}
 }
 
-// Specify the directory where your public assets are. By default it is "public"
+// Specify the directory where your public assets are. By default it is "public".
 func WithPublicDir(publicDir string) Option {
 	return func(lp *litepage) error {
 		lp.publicDir = publicDir
