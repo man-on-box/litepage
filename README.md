@@ -41,7 +41,7 @@ go get github.com/man-on-box/litepage
 
 ## Project structure
 
-The only folders Litepage interacts with by default are:
+The only directories Litepage interacts with by default are:
 
 - `public/*` - to place your static assets (js, css, icons, images, etc.)
 - `dist/*` - contains the outputted site when built, ready to be hosted
